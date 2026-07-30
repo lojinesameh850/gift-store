@@ -11,12 +11,18 @@ const customerRoutes = require('./src/routes/customerRoutes'); // Adjust path to
 // 2. Import cart routes
 const cartRoutes = require('./src/routes/cartRoutes');
 
+const adminProductRoutes = require('./src/routes/adminProductRoutes');
+
+
 dotenv.config();
 
 const app = express();
 
 // Enable CORS so your Angular app (port 4200) can talk to Express (port 5000)
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
 app.use(express.json());
 
 connectDB();
@@ -34,6 +40,8 @@ app.use('/api/account', customerRoutes);
 
 // 4. Mount Cart API endpoints
 app.use('/api/cart', cartRoutes);
+
+app.use('/api/admin/products', adminProductRoutes);
 
 const PORT = process.env.PORT || 5000;
 
