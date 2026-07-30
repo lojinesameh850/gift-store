@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const adminProductController = require('../controllers/adminProduct.controller');
+const adminProductController = require('../controllers/adminProductController');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
 router.get('/', adminMiddleware, adminProductController.getAllProducts);

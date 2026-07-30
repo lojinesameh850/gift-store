@@ -11,7 +11,7 @@ const customerRoutes = require('./src/routes/customerRoutes'); // Adjust path to
 // 2. Import cart routes
 const cartRoutes = require('./src/routes/cartRoutes');
 
-const adminProductRoutes = require('./src/routes/adminProduct.routes');
+const adminProductRoutes = require('./src/routes/adminProductRoutes');
 
 
 dotenv.config();
