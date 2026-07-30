@@ -9,4 +9,7 @@ router.post('/', mockAuthMiddleware, cartController.addToCart);
 // Remove product from cart
 router.delete('/:productId', mockAuthMiddleware, cartController.removeFromCart);
 
+// Update product quantity in cart
+router.put('/:productId', mockAuthMiddleware, cartController.updateQuantity);
+
 module.exports = router;
