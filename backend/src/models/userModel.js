@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema({
   phone: String,
   shippingAddresses: [addressSchema],
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+
+  // Cart
+  cart: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    quantity: { type: Number, required: true, min: 1, default: 1 }
+  }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
