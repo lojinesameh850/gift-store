@@ -8,6 +8,9 @@ const connectDB = require('./src/config/database');
 // 1. Import your customer routes
 const customerRoutes = require('./src/routes/customerRoutes'); // Adjust path to match project structure
 
+// 2. Import cart routes
+const cartRoutes = require('./src/routes/cartRoutes');
+
 dotenv.config();
 
 const app = express();
@@ -26,8 +29,11 @@ app.get('/', (req, res) => {
   });
 });
 
-// 2. Mount your Customer Account API endpoints
+// 3. Mount your Customer Account API endpoints
 app.use('/api/account', customerRoutes);
+
+// 4. Mount Cart API endpoints
+app.use('/api/cart', cartRoutes);
 
 const PORT = process.env.PORT || 5000;
 
