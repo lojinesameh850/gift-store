@@ -11,7 +11,7 @@ const customerRoutes = require('./src/routes/customerRoutes'); // Adjust path to
 // 2. Import cart routes
 const cartRoutes = require('./src/routes/cartRoutes');
 
-const adminProductRoutes = require('./src/routes/adminProductRoutes');
+//const adminProductRoutes = require('./src/routes/adminProductRoutes');
 
 
 dotenv.config();
@@ -41,7 +41,7 @@ app.use('/api/account', customerRoutes);
 // 4. Mount Cart API endpoints
 app.use('/api/cart', cartRoutes);
 
-app.use('/api/admin/products', adminProductRoutes);
+//app.use('/api/admin/products', adminProductRoutes);
 
 const PORT = process.env.PORT || 5000;
 

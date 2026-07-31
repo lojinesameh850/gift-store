@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
   const mockUserId = req.headers['x-mock-user-id'] || '660a123456789abcdef01234';
 
   req.user = {
-    id: '6a6a811f7f7605542cc9bc61',
+    id: '6a6ce40743e3c665222d3726',
     role: 'customer'
   };
 
