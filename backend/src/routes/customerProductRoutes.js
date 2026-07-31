@@ -3,7 +3,7 @@ const router = express.Router();
 const {
 	getProducts,
 	getProductBySlug,
-} = require("../controllers/productController");
+} = require("../controllers/customerProductController");
 
 /* 
   GET /api/products
