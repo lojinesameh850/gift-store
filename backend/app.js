@@ -15,6 +15,9 @@ const adminAuthRoutes = require('./src/routes/adminAuthRoutes');
 const adminProductRoutes = require('./src/routes/adminProductRoutes');
 const adminCategoryRoutes = require('./src/routes/adminCategoryRoutes');
 
+// NEW: Import auth routes (register/login/forgot-password/otp/reset-password)
+const authRoutes = require('./src/routes/authRoutes');
+
 
 dotenv.config();
 
@@ -36,6 +39,9 @@ app.get('/', (req, res) => {
     status: 'Success'
   });
 });
+
+// NEW: Mount auth endpoints (register, login, forgot-password, verify-otp, reset-password)
+app.use('/api/auth', authRoutes);
 
 // 3. Mount your Customer Account API endpoints
 app.use('/api/account', customerRoutes);
