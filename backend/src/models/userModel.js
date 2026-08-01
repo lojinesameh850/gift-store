@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
   role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  // Holds the JWT issued at the user's last login. Set to null on logout.
+  // authMiddleware checks incoming tokens against this field, so a token
+  // stops working immediately after logout even though the JWT itself
+  // hasn't technically expired yet.
+  activeToken: { type: String, default: null },
 
   // Customer Account
   firstName: { type: String, required: true },
