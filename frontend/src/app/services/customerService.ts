@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// For profile info
 export interface shippingAddress {
   _id?: string;
   street: string;
@@ -20,6 +21,24 @@ export interface customerProfile {
   shippingAddresses?: shippingAddress[];
 }
 
+// For wishlist
+export interface wishlistItem {
+  _id: string;
+  name: string;
+  slug: string;
+  price: number;
+  discount: number;
+  images: string[];
+  stock: number;
+  isActive: boolean;
+}
+
+interface wishlistResponse {
+  success: boolean;
+  count: number;
+  data: wishlistItem[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,6 +47,7 @@ export class customerService {
 
   constructor(private http: HttpClient) {}
 
+  //  For profile info
   getProfile(): Observable<customerProfile> {
     return this.http.get<customerProfile>(`${this.apiUrl}/profile`);
   }
@@ -35,4 +55,18 @@ export class customerService {
   updateProfile(profileData: Partial<customerProfile>): Observable<customerProfile> {
     return this.http.put<customerProfile>(`${this.apiUrl}/profile`, profileData);
   }
+
+  // For wishlist
+  getWishlist(): Observable<wishlistResponse> {
+    return this.http.get<wishlistResponse>(`${this.apiUrl}/wishlist`);
+  }
+
+  addToWishlist(productId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/wishlist/${productId}`, {});
+  }
+
+  removeFromWishlist(productId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/wishlist/${productId}`);
+   }
+
 }

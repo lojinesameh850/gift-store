@@ -7,4 +7,9 @@ const mockAuthMiddleware = require('../middleware/mockAuth'); // Temp mock middl
 router.get('/profile', mockAuthMiddleware, customerController.getProfile);
 router.put('/profile', mockAuthMiddleware, customerController.updateProfile);
 
+// Wishlist
+router.get('/wishlist', mockAuthMiddleware, customerController.getWishlist);
+router.post('/wishlist/:productId', mockAuthMiddleware, customerController.addToWishlist);
+router.delete('/wishlist/:productId', mockAuthMiddleware, customerController.removeFromWishlist);
+
 module.exports = router;
