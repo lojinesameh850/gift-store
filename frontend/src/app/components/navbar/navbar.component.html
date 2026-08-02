@@ -1,1 +1,81 @@
-<p>navbar works!</p>
+<header class="navbar navbar-expand-lg bg-white border-bottom py-3 hadeya-navbar">
+  <div class="container-fluid px-4 px-lg-5">
+
+    <!-- Logo -->
+    <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2 fw-semibold" (click)="closeMenu()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-brand">
+        <path d="M20 12v9H4v-9M2 7h20v5H2V7Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C10 2 12 7 12 7Zm0 0h4.5a2.5 2.5 0 1 0 0-5C14 2 12 7 12 7Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="text-ink">Hadeya</span>
+    </a>
+
+    <!-- Mobile toggler (Bootstrap classes, manual state control) -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen()"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" [class.show]="isMenuOpen()">
+
+      <!-- Nav links -->
+      <ul class="navbar-nav mx-lg-auto mb-3 mb-lg-0 gap-lg-4">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+             (click)="closeMenu()" class="nav-link text-ink">Home</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/shop" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">Shop</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/returns" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">Returns</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">About</a>
+        </li>
+      </ul>
+
+      <!-- Search + icons -->
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="input-group hadeya-search">
+          <span class="input-group-text bg-white border-end-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-muted-custom">
+              <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input
+            type="text"
+            class="form-control border-start-0 ps-0"
+            placeholder="Search gifts..."
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+            (keyup.enter)="onSearchSubmit()"
+          />
+        </div>
+
+        <a routerLink="/account/wishlist" class="text-ink d-flex" aria-label="Wishlist">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21s-7.5-4.6-10-9.1C.5 8.8 2 5 6 5c2 0 3.5 1 4 2.5.5-1.5 2-2.5 4-2.5 4 0 5.5 3.8 4 6.9C19.5 16.4 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </a>
+
+        <a routerLink="/cart" class="text-ink d-flex" aria-label="Cart">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6h15l-1.5 9h-12L6 6Zm0 0-1-3H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
+            <circle cx="17" cy="20" r="1.4" fill="currentColor"/>
+          </svg>
+        </a>
+
+        <a routerLink="/account/profile" class="hadeya-avatar" aria-label="Account"></a>
+      </div>
+    </div>
+  </div>
+</header>

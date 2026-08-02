@@ -1,0 +1,43 @@
+:host {
+  --nav-primary: #E15B43;
+  --nav-ink: #2A211C;
+  --nav-muted: #8C7F74;
+  --nav-border: #E8DDD0;
+}
+
+.hadeya-navbar {
+  border-bottom-color: var(--nav-border) !important;
+}
+
+.text-brand { color: var(--nav-primary); }
+.text-ink { color: var(--nav-ink) !important; }
+.text-muted-custom { color: var(--nav-muted); }
+
+.nav-link.active {
+  color: var(--nav-primary) !important;
+  font-weight: 500;
+}
+
+.hadeya-search {
+  max-width: 220px;
+}
+.hadeya-search .input-group-text,
+.hadeya-search .form-control {
+  border-color: var(--nav-border);
+}
+.hadeya-search .form-control:focus {
+  box-shadow: none;
+  border-color: var(--nav-primary);
+}
+
+.hadeya-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--nav-primary);
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .hadeya-search { max-width: 200px; }
+}
