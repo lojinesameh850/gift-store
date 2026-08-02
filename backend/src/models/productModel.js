@@ -24,29 +24,17 @@ const productSchema = new mongoose.Schema(
 			required: [true, "Product price is required"],
 			min: [0, "Price cannot be negative"],
 		},
-		discount: {
-			type: Number,
-			default: 0,
-			min: [0, "Discount cannot be negative"],
-		},
 		category: {
-			type: String,
-			required: true,
-			enum: [
-				"Home & Living",
-				"Jewelry",
-				"Personalized",
-				"Stationery",
-				"Sweets & Hampers",
-				"Kids",
-				"Corporate",
-			],
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Category",
+			required: [true, "Product category is required"],
 		},
-		occasion: {
-			type: [String],
-			required: true,
-			enum: ["Birthday", "Anniversary", "Wedding", "Graduation"],
-		},
+		tags: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Tag",
+			},
+		],
 		images: {
 			type: [String],
 			required: true,
@@ -73,10 +61,11 @@ const productSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
-	},
+	}
 );
 
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ category: 1, price: 1 });
+productSchema.index({ tags: 1 });
 
 module.exports = mongoose.model("Product", productSchema);

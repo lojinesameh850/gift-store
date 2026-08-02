@@ -5,7 +5,7 @@ exports.getAllProducts = async (req, res) => {
     let {
       search,
       category,
-      occasion,
+      tag,
       minPrice,
       maxPrice,
       isFeatured,
@@ -30,13 +30,11 @@ exports.getAllProducts = async (req, res) => {
     }
 
     if (category) {
-      const decodedCategory = decodeURIComponent(category).trim();
-
-      filter.category = { $regex: `^${decodedCategory}$`, $options: 'i' };
+      filter.category = category;
     }
 
-    if (occasion) {
-      filter.occasion = { $regex: occasion, $options: 'i' };
+    if (tag) {
+      filter.tags = tag;
     }
 
     if (minPrice || maxPrice) {
@@ -58,7 +56,10 @@ exports.getAllProducts = async (req, res) => {
       sortOption = sort;
     }
 
-    const products = await Product.find(filter).sort(sortOption);
+    const products = await Product.find(filter)
+      .populate('category', 'name')
+      .populate('tags', 'name')
+      .sort(sortOption);
 
     if (products.length === 0) {
       return res.status(200).json({
@@ -89,19 +90,18 @@ exports.createProduct = async (req, res) => {
       name,
       description,
       price,
-      discount,
       category,
-      occasion,
+      tags,
       images,
       stock,
       isFeatured,
       isActive
     } = req.body;
 
-    if (!name || !description || price === undefined || !category || !occasion) {
+    if (!name || !description || price === undefined || !category) {
       return res.status(400).json({
         success: false,
-        message: 'Name, description, price, category, and occasion are required'
+        message: 'Name, description, price, and category are required'
       });
     }
 
@@ -132,14 +132,18 @@ exports.createProduct = async (req, res) => {
       slug,
       description,
       price,
-      discount: discount || 0,
       category,
-      occasion,
+      tags: tags || [],
       images: images || [],
       stock: stock || 0,
       isFeatured: isFeatured || false,
       isActive: isActive !== undefined ? isActive : true
     });
+
+    await product.populate([
+      { path: 'category', select: 'name' },
+      { path: 'tags', select: 'name' }
+    ]);
 
     res.status(201).json({
       success: true,
@@ -156,7 +160,9 @@ exports.createProduct = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id)
+      .populate('category', 'name')
+      .populate('tags', 'name');
 
     if (!product) {
       return res.status(404).json({
@@ -215,7 +221,9 @@ exports.updateProduct = async (req, res) => {
       req.params.id,
       req.body,
       { new: true, runValidators: true }
-    );
+    )
+      .populate('category', 'name')
+      .populate('tags', 'name');
 
     res.status(200).json({
       success: true,
