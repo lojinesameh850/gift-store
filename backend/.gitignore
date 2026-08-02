@@ -3,6 +3,7 @@
 
 # Test seed
 accSeed.js
+prodSeed.js
 
 # Logs
 *.log
