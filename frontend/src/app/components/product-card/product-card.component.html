@@ -1,1 +1,17 @@
-
+<div class="product-card">
+  <div class="image-container">
+    @if (product().image) {
+      <img [src]="product().image" [alt]="product().name" />
+    } @else {
+      <div class="placeholder-icon">🎁</div>
+    }
+  </div>
+  <div class="card-body">
+    <h3 class="product-name">{{ product().name }}</h3>
+    
+    <div class="card-footer">
+      <span class="product-price">EGP {{ product().price }}</span>
+      <button class="add-btn" (click)="onAddToCart()" aria-label="Add to cart">+</button>
+    </div>
+  </div>
+</div>
