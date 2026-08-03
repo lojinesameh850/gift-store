@@ -39,7 +39,8 @@ exports.getAllProducts = async (req, res) => {
     }
 
     if (tag) {
-      filter.tags = tag;
+      const tagsArray = tag.split(',');
+      filter.tags = { $in: tagsArray };
     }
 
     if (minPrice || maxPrice) {
