@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { customerService, customerProfile, shippingAddress } from '../../services/customerService';
+import { customerService, customerProfile, shippingAddress } from '../../../services/customerService';
+import { notificationService } from '../../../services/notificationService';
 
 @Component({
   selector: 'app-profile',
@@ -12,11 +13,17 @@ import { customerService, customerProfile, shippingAddress } from '../../service
 })
 export class profileComponent implements OnInit {
   profileForm!: FormGroup;
-  addresses: shippingAddress[] = [];
+  addresses = signal<shippingAddress[]>([]);
 
-  // Separate display properties to stop "real-time" header updates while typing
-  displayName = '';
-  userInitials = '';
+  // Header display, derived from signals instead of manually re-synced after
+  // every save - updateHeaderDisplay() no longer needs to exist as a
+  // separate step you have to remember to call.
+  private firstName = signal('');
+  private lastName = signal('');
+  displayName = computed(() => `${this.firstName()} ${this.lastName()}`.trim());
+  userInitials = computed(() =>
+    `${this.firstName()?.[0] || ''}${this.lastName()?.[0] || ''}`.toUpperCase()
+  );
 
   showAddressModal = false;
   editingAddressId: string | null = null;
@@ -24,7 +31,8 @@ export class profileComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private customerService: customerService
+    private customerService: customerService,
+    private notifications: notificationService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +61,6 @@ export class profileComponent implements OnInit {
   loadProfile(): void {
     this.customerService.getProfile().subscribe({
       next: (data: customerProfile) => {
-        // Set initial form values
         this.profileForm.patchValue({
           firstName: data.firstName,
           lastName: data.lastName,
@@ -61,50 +68,42 @@ export class profileComponent implements OnInit {
           phone: data.phone
         });
 
-        // Set static header displays (won't change until save)
-        this.updateHeaderDisplay(data.firstName, data.lastName);
-
-        // Populate addresses array directly from backend response
-        this.addresses = data.shippingAddresses || [];
+        this.firstName.set(data.firstName);
+        this.lastName.set(data.lastName);
+        this.addresses.set(data.shippingAddresses || []);
       },
       error: (err) => console.error('Error loading profile:', err)
     });
   }
 
-  private updateHeaderDisplay(first: string, last: string): void {
-    this.displayName = `${first} ${last}`.trim();
-    this.userInitials = `${first?.[0] || ''}${last?.[0] || ''}`.toUpperCase();
-  }
-
-  // --- 1. Fix Profile Info Real-Time Typing ---
+  // --- 1. Profile Info ---
   onSaveProfile(): void {
     if (this.profileForm.invalid) return;
 
     this.customerService.updateProfile(this.profileForm.getRawValue()).subscribe({
       next: (updatedProfile: customerProfile) => {
-        // Only update the header display AFTER successful save
-        this.updateHeaderDisplay(updatedProfile.firstName, updatedProfile.lastName);
-        alert('Profile changes saved successfully!');
-        window.location.reload();
+        // Header derives from these signals automatically - no reload needed.
+        this.firstName.set(updatedProfile.firstName);
+        this.lastName.set(updatedProfile.lastName);
+        this.notifications.showSuccess('Profile changes saved successfully');
       },
       error: (err) => {
         console.error('Failed to save profile:', err);
-        alert('Failed to save profile changes.');
       }
     });
   }
 
-  // --- 2. Fix Address Updates Requiring Reload ---
+  // --- 2. Address Updates ---
   private saveAddressesToBackend(updatedAddresses: shippingAddress[]): void {
     this.customerService.updateProfile({ shippingAddresses: updatedAddresses }).subscribe({
       next: (updatedProfile: customerProfile) => {
-        // Re-assign addresses directly from server response so UI immediately reflects changes
-        this.addresses = updatedProfile.shippingAddresses || [];
-        window.location.reload();
+        // Re-assign directly from the server response - single source of
+        // truth, no reload required to "pick up" the change.
+        this.addresses.set(updatedProfile.shippingAddresses || []);
       },
       error: (err) => {
         console.error('Failed to update addresses:', err);
-        // Optional fallback: re-fetch whole profile if update response is partial
+        // Fallback: re-fetch whole profile if the update response was partial.
         this.loadProfile();
       }
     });
@@ -113,13 +112,13 @@ export class profileComponent implements OnInit {
   // --- Address Modal Controls ---
   setDefaultAddress(targetAddr: shippingAddress): void {
     if (targetAddr.isDefault) return;
-    const updated = this.addresses.map(a => ({ ...a, isDefault: a._id === targetAddr._id }));
+    const updated = this.addresses().map((a) => ({ ...a, isDefault: a._id === targetAddr._id }));
     this.saveAddressesToBackend(updated);
   }
 
   openAddModal(): void {
     this.editingAddressId = null;
-    this.addressForm.reset({ isDefault: this.addresses.length === 0 });
+    this.addressForm.reset({ isDefault: this.addresses().length === 0 });
     this.showAddressModal = true;
   }
 
@@ -138,14 +137,14 @@ export class profileComponent implements OnInit {
     if (this.addressForm.invalid) return;
 
     const formVal = this.addressForm.value;
-    let updatedList = [...this.addresses];
+    let updatedList = [...this.addresses()];
 
     if (formVal.isDefault) {
-      updatedList = updatedList.map(a => ({ ...a, isDefault: false }));
+      updatedList = updatedList.map((a) => ({ ...a, isDefault: false }));
     }
 
     if (this.editingAddressId) {
-      updatedList = updatedList.map(a =>
+      updatedList = updatedList.map((a) =>
         a._id === this.editingAddressId ? { ...formVal, _id: this.editingAddressId } : a
       );
     } else {
@@ -157,21 +156,16 @@ export class profileComponent implements OnInit {
   }
 
   onDeleteAddress(id?: string): void {
-    // 1. Guard check for missing ID
     if (!id) {
       console.error('Cannot delete address: Missing address ID');
       return;
     }
 
-    // 2. User confirmation
     if (!confirm('Are you sure you want to delete this address?')) {
       return;
     }
 
-    // 3. Filter out the address to delete
-    const updatedList = this.addresses.filter(a => a._id !== id);
-
-    // 4. Send the updated array to the backend (which handles window.location.reload())
+    const updatedList = this.addresses().filter((a) => a._id !== id);
     this.saveAddressesToBackend(updatedList);
   }
 
