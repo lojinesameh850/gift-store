@@ -10,8 +10,13 @@ exports.getAllProducts = async (req, res) => {
       maxPrice,
       isFeatured,
       isActive,
-      sort
+      sort,
+      page = 1,
+      limit = 10
     } = req.query;
+
+    page = Number(page);
+    limit = Number(limit);
 
     if (minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) {
       return res.status(400).json({
@@ -51,20 +56,39 @@ exports.getAllProducts = async (req, res) => {
       filter.isActive = isActive === 'true';
     }
 
-    let sortOption = { createdAt: -1 };
-    if (sort) {
-      sortOption = sort;
-    }
+    const sortMapping = {
+      'price-asc': { price: 1 },
+      'price-desc': { price: -1 },
+      'Low to High': { price: 1 },
+      'High to Low': { price: -1 },
+      'newest': { createdAt: -1 },
+      'oldest': { createdAt: 1 },
+      'name-asc': { name: 1 },
+      'name-desc': { name: -1 }
+    };
+
+    let sortOption = sortMapping[sort] || { createdAt: -1 };
+
+    const skip = (page - 1) * limit;
+
+    const total = await Product.countDocuments(filter);
 
     const products = await Product.find(filter)
       .populate('category', 'name')
       .populate('tags', 'name')
-      .sort(sortOption);
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit);
+
+    const pages = Math.ceil(total / limit);
 
     if (products.length === 0) {
       return res.status(200).json({
         success: true,
         count: 0,
+        total: 0,
+        page,
+        pages: 0,
         message: 'No products found matching your criteria. Try different filters.',
         data: []
       });
@@ -73,6 +97,9 @@ exports.getAllProducts = async (req, res) => {
     res.status(200).json({
       success: true,
       count: products.length,
+      total,
+      page,
+      pages,
       data: products
     });
 
