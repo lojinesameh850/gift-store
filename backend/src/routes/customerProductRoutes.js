@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-	getProducts,
+	getAllProducts,
 	getProductBySlug,
 } = require("../controllers/customerProductController");
 
@@ -11,13 +11,13 @@ const {
   - page (number)
   - limit (number)
   - category (ObjectId)
-  - occasion (Comma-separated ObjectIds)
+  - tags (Comma-separated ObjectIds)
   - minPrice (number)
   - maxPrice (number)
   - search (string)
-  - sort (popular, price_asc, price_desc, newest, oldest)
+  - sort (lowest-price, highest-price, newest, oldest)
 */
-router.get("/", getProducts);
+router.get("/", getAllProducts);
 
 /* 
   GET /api/products/:slug
