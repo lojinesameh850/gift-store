@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { customerService, wishlistItem } from '../../services/customerService';
+import { customerService, wishlistItem } from '../../../services/customerService';
+import { notificationService } from '../../../services/notificationService';
 
 @Component({
   selector: 'app-wishlist',
@@ -11,12 +12,13 @@ import { customerService, wishlistItem } from '../../services/customerService';
   styleUrl: './wishlistPage.css'
 })
 export class wishlistComponent implements OnInit {
-  items: wishlistItem[] = [];
-  isLoading = true;
-  removingId: string | null = null;
+  items = signal<wishlistItem[]>([]);
+  isLoading = signal(true);
+  removingId = signal<string | null>(null);
 
   constructor(
     private customerService: customerService,
+    private notifications: notificationService,
     private router: Router
   ) {}
 
@@ -25,33 +27,34 @@ export class wishlistComponent implements OnInit {
   }
 
   loadWishlist(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.customerService.getWishlist().subscribe({
       next: (res) => {
-        this.items = res.data;
-        this.isLoading = false;
+        this.items.set(res.data);
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Failed to load wishlist:', err);
-        this.isLoading = false;
+      error: () => {
+        // notificationInterceptor already surfaces the error toast - just
+        // stop the loading state here.
+        this.isLoading.set(false);
       }
     });
   }
 
   onRemove(item: wishlistItem): void {
     // Guard against double-clicks while a removal is in flight
-    if (this.removingId) return;
+    if (this.removingId()) return;
 
-    this.removingId = item._id;
+    this.removingId.set(item._id);
     this.customerService.removeFromWishlist(item._id).subscribe({
       next: () => {
-        // Force reload so the page reflects the change immediately,
-        // matching the pattern used in profilePage's address updates.
-        window.location.reload();
+        // Update local state directly instead of reloading the whole page.
+        this.items.update((list) => list.filter((i) => i._id !== item._id));
+        this.removingId.set(null);
+        this.notifications.showSuccess('Removed from wishlist');
       },
-      error: (err) => {
-        console.error('Failed to remove item from wishlist:', err);
-        this.removingId = null;
+      error: () => {
+        this.removingId.set(null);
       }
     });
   }

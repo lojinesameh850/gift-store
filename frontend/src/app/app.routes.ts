@@ -1,20 +1,26 @@
 import { Routes } from '@angular/router';
-import { accountLayoutComponent } from './pages/account/accountLayout';
-import { profileComponent } from './pages/account/profilePage';
-import { wishlistComponent } from './pages/account/wishlistPage';
-import { CartComponent } from './pages/cart/cart.component';
-export const routes: Routes = [
+
+import { HomeComponent } from './pages/home/home.component';
 import { ShopComponent } from './pages/shop/shop.component';
+
+import { accountLayoutComponent } from './pages/account/accountLayout';
+import { profileComponent } from './pages/account/profile/profilePage';
+import { wishlistComponent } from './pages/account/wishlist/wishlistPage';
+
+import { loginComponent} from './pages/auth/login/loginPage';
+import { registerComponent} from './pages/auth/register/registerPage';
+import { forgotPasswordComponent } from './pages/auth/forgotPassword/forgotPasswordPage';
+import { verifyOtpComponent } from './pages/auth/verifyOtp/verifyOtpPage';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'shop', component: ShopComponent },
-  { path: 'cart', component: CartComponent },
 
-  { path: '**', redirectTo: '' },
-  // Account section: shared sidebar layout with profile & wishlist as children
-  { path: '', redirectTo: 'shop', pathMatch: 'full' },
-  { path: 'shop', component: ShopComponent },
+  { path: 'auth/login', component: loginComponent },
+  { path: 'auth/register', component: registerComponent },
+  { path: 'auth/forgot-password', component: forgotPasswordComponent },
+  { path: 'auth/verify-otp', component: verifyOtpComponent },
+
   {
     path: 'account',
     component: accountLayoutComponent,
@@ -24,5 +30,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'profile', pathMatch: 'full' }
     ]
   },
-  { path: '**', component: ShopComponent }
+
+  { path: 'cart', component: CartComponent },
+
+  { path: '**', redirectTo: 'error' }
 ];

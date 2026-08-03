@@ -4,7 +4,7 @@
 
   <section class="card">
     <div class="user-header">
-      <div class="avatar">{{ userInitials }}</div>
+      <div class="avatar">{{ userInitials() }}</div>
       <div class="user-name">
         <h3>{{ profileForm.get('firstName')?.value }} {{ profileForm.get('lastName')?.value }}</h3>
       </div>
@@ -43,10 +43,10 @@
 
   <section class="card">
     <div class="addresses-container">
-      <div *ngIf="addresses.length > 0; else noAddresses" class="address-list">
+      <div *ngIf="addresses().length > 0; else noAddresses" class="address-list">
         <div
           class="address-card"
-          *ngFor="let addr of addresses"
+          *ngFor="let addr of addresses()"
           [class.is-default]="addr.isDefault"
         >
           <div class="address-header">

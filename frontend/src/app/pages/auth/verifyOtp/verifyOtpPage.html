@@ -1,0 +1,75 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="brand-icon">
+        <path d="M20 12v9H4v-9M2 7h20v5H2V7Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 22V7M12 7H7.5a2.5 2.5 0 1 1 0-5C10 2 12 7 12 7Zm0 0h4.5a2.5 2.5 0 1 0 0-5C14 2 12 7 12 7Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-name">Hadeya</span>
+    </div>
+
+    <div class="form-error" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+
+    <!-- Step 1: verify the code -->
+    <ng-container *ngIf="step() === 'verify'">
+      <h1 class="auth-title">Check your email</h1>
+      <p class="auth-subtitle">Enter the 6-digit code we sent to your email</p>
+
+      <form [formGroup]="verifyForm" (ngSubmit)="onVerifyCode()">
+        <div class="form-group">
+          <label>Verification Code</label>
+          <input
+            type="text"
+            inputmode="numeric"
+            formControlName="otp"
+            class="form-control otp-input"
+            placeholder="000000"
+            maxlength="6"
+            autocomplete="one-time-code"
+          />
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="verifyForm.invalid || isSubmitting()">
+          {{ isSubmitting() ? 'Verifying...' : 'Verify Code' }}
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        Wrong email? <a class="link" (click)="backToRequest()">Go back</a>
+      </p>
+    </ng-container>
+
+    <!-- Step 2: set a new password -->
+    <ng-container *ngIf="step() === 'reset'">
+      <h1 class="auth-title">Set a new password</h1>
+      <p class="auth-subtitle">Choose a new password for your account</p>
+
+      <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()">
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" formControlName="newPassword" class="form-control" placeholder="At least 8 characters" autocomplete="new-password" />
+        </div>
+
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Re-enter your password" autocomplete="new-password" />
+          <span class="field-hint" *ngIf="resetForm.get('confirmPassword')?.errors?.['mismatch']">
+            Passwords do not match.
+          </span>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="resetForm.invalid || isSubmitting()">
+          {{ isSubmitting() ? 'Resetting...' : 'Reset Password' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <!-- Step 3: done -->
+    <ng-container *ngIf="step() === 'done'">
+      <h1 class="auth-title">Password reset</h1>
+      <p class="auth-subtitle">Your password has been changed successfully. You can now log in.</p>
+
+      <a routerLink="/auth/login" class="btn-primary btn-link">Back to Log In</a>
+    </ng-container>
+  </div>
+</div>
