@@ -46,10 +46,6 @@ const productSchema = new mongoose.Schema(
 			min: [0, "Stock cannot be negative"],
 			default: 0,
 		},
-		sold: {
-			type: Number,
-			default: 0,
-		},
 		isFeatured: {
 			type: Boolean,
 			default: false,
