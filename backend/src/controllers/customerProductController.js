@@ -1,112 +1,107 @@
 const Product = require("../models/productModel");
 
-const getProducts = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
 	try {
-		const page = Math.max(parseInt(req.query.page) || 1, 1);
-		const limit = Math.min(
-			Math.max(parseInt(req.query.limit) || 12, 1),
-			50,
-		);
+		let { search, category, tags, minPrice, maxPrice, sort, page, limit } =
+			req.query;
 
-		const filter = { isActive: true };
+		let filter = { isActive: true };
 
-		if (req.query.category) {
-			filter.category = req.query.category;
+		if (search) {
+			filter.$or = [
+				{ name: { $regex: search, $options: "i" } },
+				{ description: { $regex: search, $options: "i" } },
+			];
 		}
 
-		if (req.query.occasion) {
-			filter.occasion = { $in: req.query.occasion.split(",") };
+		if (category) {
+			filter.category = category;
 		}
 
-		if (
-			req.query.minPrice !== undefined ||
-			req.query.maxPrice !== undefined
-		) {
+		if (tags) {
+			const tagsArray = tags.split(",");
+			filter.tags = { $in: tagsArray };
+		}
+
+		if (minPrice || maxPrice) {
 			filter.price = {};
-			if (req.query.minPrice !== undefined) {
-				filter.price.$gte = Number(req.query.minPrice);
+			if (minPrice) filter.price.$gte = Number(minPrice);
+			if (maxPrice) filter.price.$lte = Number(maxPrice);
+		}
+
+		let sortOption = { createdAt: -1 };
+		if (sort) {
+			switch (sort) {
+				case "lowest-price":
+					sortOption = { price: 1 };
+					break;
+				case "highest-price":
+					sortOption = { price: -1 };
+					break;
+				case "newest":
+					sortOption = { createdAt: -1 };
+					break;
+				case "oldest":
+					sortOption = { createdAt: 1 };
+					break;
+				default:
+					sortOption = { createdAt: -1 };
 			}
-			if (req.query.maxPrice !== undefined) {
-				filter.price.$lte = Number(req.query.maxPrice);
-			}
 		}
 
-		if (req.query.search) {
-			filter.$text = { $search: req.query.search };
-		}
+		const pageNumber = parseInt(page) || 1;
+		const limitNumber = parseInt(limit) || 12;
+		const skip = (pageNumber - 1) * limitNumber;
 
-		const sortMap = {
-			popular: { sold: -1 },
-			price_asc: { price: 1 },
-			price_desc: { price: -1 },
-			newest: { createdAt: -1 },
-			oldest: { createdAt: 1 },
-		};
+		const products = await Product.find(filter)
+			.populate("category", "name slug")
+			.populate("tags", "name slug")
+			.sort(sortOption)
+			.skip(skip)
+			.limit(limitNumber);
 
-		const sortKey = req.query.sort || "popular";
-		if (!sortMap[sortKey]) {
-			return res
-				.status(400)
-				.json({ success: false, message: "Invalid sort parameter" });
-		}
-
-		const skip = (page - 1) * limit;
-
-		const [products, totalCount] = await Promise.all([
-			Product.find(filter).sort(sortMap[sortKey]).skip(skip).limit(limit),
-			Product.countDocuments(filter),
-		]);
+		const totalProducts = await Product.countDocuments(filter);
 
 		res.status(200).json({
 			success: true,
-			data: {
-				products,
-				pagination: {
-					currentPage: page,
-					limit,
-					totalPages: Math.ceil(totalCount / limit),
-					totalCount,
-				},
-			},
+			count: products.length,
+			totalProducts,
+			totalPages: Math.ceil(totalProducts / limitNumber),
+			currentPage: pageNumber,
+			data: products,
 		});
 	} catch (error) {
-		console.error(error);
 		res.status(500).json({
 			success: false,
-			message: "Something went wrong",
+			message: error.message,
 		});
 	}
 };
 
-const getProductBySlug = async (req, res) => {
+exports.getProductBySlug = async (req, res) => {
 	try {
-		const { slug } = req.params;
-
-		const product = await Product.findOne({ slug: slug, isActive: true });
+		const product = await Product.findOne({
+			slug: req.params.slug,
+			isActive: true,
+		})
+			.populate("category", "name slug")
+			.populate("tags", "name slug");
 
 		if (!product) {
 			return res.status(404).json({
 				success: false,
-				message: "Product not found",
+				message: "Product not found or unavailable",
 			});
 		}
 
 		res.status(200).json({
 			success: true,
-			data: {
-				product,
-			},
+			data: product,
 		});
 	} catch (error) {
-		console.error(error);
 		res.status(500).json({
 			success: false,
-			message: "Something went wrong",
+			message: error.message,
 		});
 	}
-};
-
-module.exports = {
-	getProducts,
-	getProductBySlug,
 };
