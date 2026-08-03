@@ -1,11 +1,16 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './pages/home/home.component';
-import { ShopComponent } from './pages/shop/shop.component';
+import { adminLayoutComponent } from './layouts/admin/adminLayout';
+import { adminProductsPageComponent } from './pages/admin/products/adminProductsPage';
+import { adminCategoriesPageComponent } from './pages/admin/categories/adminCategoriesPage';
+import { adminTagsPageComponent } from './pages/admin/tags/adminTagsPage';
 
-import { accountLayoutComponent } from './pages/account/accountLayout';
-import { profileComponent } from './pages/account/profile/profilePage';
-import { wishlistComponent } from './pages/account/wishlist/wishlistPage';
+import { customerLayoutComponent } from './layouts/customer/customerLayout';
+import { accountLayoutComponent } from './layouts/customer/account/accountLayout';
+import { profileComponent } from './pages/customer/account/profile/profilePage';
+import { wishlistComponent } from './pages/customer/account/wishlist/wishlistPage';
+import { HomeComponent } from './pages/customer/home/home.component';
+import { ShopComponent } from './pages/customer/shop/shop.component';
 
 import { loginComponent} from './pages/auth/login/loginPage';
 import { registerComponent} from './pages/auth/register/registerPage';
@@ -13,21 +18,40 @@ import { forgotPasswordComponent } from './pages/auth/forgotPassword/forgotPassw
 import { verifyOtpComponent } from './pages/auth/verifyOtp/verifyOtpPage';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'shop', component: ShopComponent },
-
+  // Auth pages sit outside customerLayout - no top nav/footer during
+  // login/register/etc. Move them inside the customerLayout children
+  // below instead if you actually want that chrome on auth pages.
   { path: 'auth/login', component: loginComponent },
   { path: 'auth/register', component: registerComponent },
   { path: 'auth/forgot-password', component: forgotPasswordComponent },
   { path: 'auth/verify-otp', component: verifyOtpComponent },
 
   {
-    path: 'account',
-    component: accountLayoutComponent,
+    path: '',
+    component: customerLayoutComponent,
     children: [
-      { path: 'profile', component: profileComponent },
-      { path: 'wishlist', component: wishlistComponent },
-      { path: '', redirectTo: 'profile', pathMatch: 'full' }
+      { path: '', component: HomeComponent },
+      { path: 'shop', component: ShopComponent },
+      {
+        path: 'account',
+        component: accountLayoutComponent,
+        children: [
+          { path: 'profile', component: profileComponent },
+          { path: 'wishlist', component: wishlistComponent },
+          { path: '', redirectTo: 'profile', pathMatch: 'full' }
+        ]
+      }
+    ]
+  },
+
+  {
+    path: 'admin',
+    component: adminLayoutComponent,
+    children: [
+      { path: 'products', component: adminProductsPageComponent },
+      { path: 'categories', component: adminCategoriesPageComponent },
+      { path: 'tags', component: adminTagsPageComponent },
+      { path: '', redirectTo: 'products', pathMatch: 'full' }
     ]
   },
 

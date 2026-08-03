@@ -1,8 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { customerService, wishlistItem } from '../../../services/customerService';
-import { notificationService } from '../../../services/notificationService';
+import { customerService, wishlistItem } from '../../../../services/customer/customerService';
+import { notificationService } from '../../../../services/notificationService';
 
 @Component({
   selector: 'app-wishlist',

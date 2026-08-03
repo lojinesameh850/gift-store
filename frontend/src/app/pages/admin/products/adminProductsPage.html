@@ -1,0 +1,153 @@
+<div class="page-header">
+  <h1>Products</h1>
+  <button pButton type="button" label="+ Add Product" class="btn-primary" (click)="openAddModal()"></button>
+</div>
+
+<div class="toolbar">
+  <span class="p-input-icon-left search-input">
+    <i class="pi pi-search"></i>
+    <input
+      pInputText
+      type="text"
+      placeholder="Search products..."
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchInput($event)"
+    />
+  </span>
+
+  <p-select
+    [options]="categoryOptions"
+    [(ngModel)]="selectedCategoryFilter"
+    (onChange)="onCategoryFilterChange()"
+    placeholder="All Categories"
+    [showClear]="true"
+    styleClass="category-filter"
+  ></p-select>
+</div>
+
+<p-table
+  [value]="products"
+  [loading]="isLoading"
+  [paginator]="true"
+  [rows]="limit"
+  [totalRecords]="total"
+  [lazy]="true"
+  (onPage)="onPageChange($event)"
+  [rowsPerPageOptions]="[10, 20, 50]"
+  styleClass="products-table"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Product</th>
+      <th>Category</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Status</th>
+      <th style="width: 100px"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-p>
+    <tr>
+      <td>
+        <div class="product-cell">
+          <img *ngIf="p.images?.length" [src]="p.images[0]" class="thumb" alt="" />
+          <span *ngIf="!p.images?.length" class="thumb thumb-placeholder"></span>
+          <span class="product-name">{{ p.name }}</span>
+        </div>
+      </td>
+      <td>{{ categoryName(p.category) }}</td>
+      <td>EGP {{ p.price }}</td>
+      <td>{{ p.stock }}</td>
+      <td>
+        <p-tag
+          [value]="stockStatus(p.stock).label"
+          [severity]="stockStatus(p.stock).severity"
+        ></p-tag>
+      </td>
+      <td>
+        <div class="actions">
+          <button pButton type="button" icon="pi pi-pencil" class="icon-btn" (click)="openEditModal(p)"></button>
+          <button pButton type="button" icon="pi pi-trash" class="icon-btn danger" (click)="onDelete(p)"></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="6" class="empty-state">No products found matching your criteria.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- Add/Edit Modal -->
+<p-dialog
+  [header]="editingId ? 'Edit Product' : 'Add Product'"
+  [(visible)]="showModal"
+  [modal]="true"
+  [style]="{ width: '480px' }"
+  (onHide)="closeModal()"
+>
+  <form [formGroup]="productForm" (ngSubmit)="onSave()" class="product-form">
+    <div class="form-group">
+      <label>Name *</label>
+      <input pInputText type="text" formControlName="name" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label>Description *</label>
+      <textarea pTextarea formControlName="description" rows="3" class="form-control"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (EGP) *</label>
+        <p-inputnumber formControlName="price" mode="decimal" [min]="0" class="form-control"></p-inputnumber>
+      </div>
+      <div class="form-group">
+        <label>Stock *</label>
+        <p-inputnumber formControlName="stock" [min]="0" class="form-control"></p-inputnumber>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Category *</label>
+      <p-select
+        formControlName="category"
+        [options]="categoryOptions"
+        placeholder="Select a category"
+        class="form-control"
+      ></p-select>
+    </div>
+
+    <div class="form-group">
+      <label>Tags</label>
+      <p-multiselect
+        formControlName="tags"
+        [options]="tags"
+        optionLabel="name"
+        optionValue="_id"
+        placeholder="Select tags"
+        class="form-control"
+      ></p-multiselect>
+    </div>
+
+    <div class="checkbox-row">
+      <label><p-checkbox formControlName="isFeatured" [binary]="true"></p-checkbox> Featured</label>
+      <label><p-checkbox formControlName="isActive" [binary]="true"></p-checkbox> Active</label>
+    </div>
+
+    <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="modal-actions">
+      <button pButton type="button" label="Cancel" class="btn-secondary" (click)="closeModal()"></button>
+      <p-button
+        type="submit"
+        [label]="isSaving ? 'Saving...' : 'Save Product'"
+        styleClass="btn-primary"
+        [disabled]="productForm.invalid || isSaving"
+      ></p-button>
+    </div>
+  </form>
+</p-dialog>

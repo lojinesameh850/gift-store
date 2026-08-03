@@ -3,14 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
-import { NavbarComponent } from './components/navbar/navbar.component';
 
 const NO_NAVBAR_PATHS = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/verify-otp'];
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

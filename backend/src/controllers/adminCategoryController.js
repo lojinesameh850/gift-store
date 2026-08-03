@@ -15,7 +15,7 @@ exports.getAllCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, isActive } = req.body;
 
     if (!name) {
       return res.status(400).json({ success: false, message: 'Category name is required' });
@@ -26,7 +26,8 @@ exports.createCategory = async (req, res) => {
     const category = await Category.create({
       name,
       slug,
-      description
+      description,
+      isActive: isActive !== undefined ? isActive : true
     });
 
     res.status(201).json({

@@ -1,8 +1,8 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { customerService, customerProfile, shippingAddress } from '../../../services/customerService';
-import { notificationService } from '../../../services/notificationService';
+import { customerService, customerProfile, shippingAddress } from '../../../../services/customer/customerService';
+import { notificationService } from '../../../../services/notificationService';
 
 @Component({
   selector: 'app-profile',
