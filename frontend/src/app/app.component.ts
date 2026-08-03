@@ -4,6 +4,7 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 const NO_NAVBAR_PATHS = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/verify-otp'];
 
@@ -11,6 +12,7 @@ const NO_NAVBAR_PATHS = ['/auth/login', '/auth/register', '/auth/forgot-password
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NavbarComponent],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

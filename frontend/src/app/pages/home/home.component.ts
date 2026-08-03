@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { HeroBannerComponent } from '../../components/hero-banner/hero-banner.component';
-import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
   selector: 'app-home',
-  imports: [HeroBannerComponent, FooterComponent],
+  imports: [HeroBannerComponent,],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
