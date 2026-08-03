@@ -1,5 +1,4 @@
-<!-- Root container for your application -->
-<app-navbar></app-navbar>
+<app-navbar *ngIf="showNavbar$ | async"></app-navbar>
 <main class="main-layout">
   <router-outlet></router-outlet>
 </main>

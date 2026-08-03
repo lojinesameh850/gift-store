@@ -1,16 +1,16 @@
 <div class="section-wrapper">
   <div class="wishlist-heading">
     <h2 class="section-subtitle">My Wishlist</h2>
-    <span class="item-count" *ngIf="!isLoading">{{ items.length }} item{{ items.length === 1 ? '' : 's' }}</span>
+    <span class="item-count" *ngIf="!isLoading()">{{ items().length }} item{{ items().length === 1 ? '' : 's' }}</span>
   </div>
 
-  <div *ngIf="isLoading" class="empty-card">
+  <div *ngIf="isLoading()" class="empty-card">
     <p class="text-muted">Loading your wishlist...</p>
   </div>
 
-  <ng-container *ngIf="!isLoading">
-    <div *ngIf="items.length > 0; else emptyWishlist" class="wishlist-grid">
-      <div class="wishlist-card" *ngFor="let item of items">
+  <ng-container *ngIf="!isLoading()">
+    <div *ngIf="items().length > 0; else emptyWishlist" class="wishlist-grid">
+      <div class="wishlist-card" *ngFor="let item of items()">
         <div class="wishlist-image">
           <img *ngIf="item.images?.length" [src]="item.images[0]" [alt]="item.name" />
           <svg *ngIf="!item.images?.length" class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -33,7 +33,7 @@
             <button
               class="remove-circle-btn"
               (click)="onRemove(item)"
-              [disabled]="removingId === item._id"
+              [disabled]="removingId() === item._id"
               title="Remove from wishlist"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>

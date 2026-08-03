@@ -1,18 +1,26 @@
 import { Routes } from '@angular/router';
+
 import { HomeComponent } from './pages/home/home.component';
 import { ShopComponent } from './pages/shop/shop.component';
-import { accountLayoutComponent } from './pages/account/accountLayout';
-import { profileComponent } from './pages/account/profilePage';
-import { wishlistComponent } from './pages/account/wishlistPage';
 
+import { accountLayoutComponent } from './pages/account/accountLayout';
+import { profileComponent } from './pages/account/profile/profilePage';
+import { wishlistComponent } from './pages/account/wishlist/wishlistPage';
+
+import { loginComponent} from './pages/auth/login/loginPage';
+import { registerComponent} from './pages/auth/register/registerPage';
+import { forgotPasswordComponent } from './pages/auth/forgotPassword/forgotPasswordPage';
+import { verifyOtpComponent } from './pages/auth/verifyOtp/verifyOtpPage';
+
+export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'shop', component: ShopComponent },
-  { path: 'account/profile', component: profileComponent },
-  { path: '**', redirectTo: '' }
-  // Redirect root URL directly to account page FOR NOW
-  { path: '', redirectTo: 'account/profile', pathMatch: 'full' },
 
-  // Account section: shared sidebar layout with profile & wishlist as children
+  { path: 'auth/login', component: loginComponent },
+  { path: 'auth/register', component: registerComponent },
+  { path: 'auth/forgot-password', component: forgotPasswordComponent },
+  { path: 'auth/verify-otp', component: verifyOtpComponent },
+
   {
     path: 'account',
     component: accountLayoutComponent,
@@ -23,6 +31,5 @@ import { wishlistComponent } from './pages/account/wishlistPage';
     ]
   },
 
-  // Fallback for unknown routes
   { path: '**', redirectTo: 'error' }
 ];
