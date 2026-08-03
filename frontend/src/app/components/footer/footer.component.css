@@ -1,0 +1,66 @@
+:host {
+  --footer-bg: #241C18;
+  --footer-muted: #A89A8E;
+  --footer-border: #3A2E27;
+  --brand-primary: #E15B43;
+
+  display: block;
+}
+
+.hadeya-footer {
+  background-color: var(--footer-bg);
+}
+
+.text-brand { color: var(--brand-primary); }
+
+.text-muted-footer {
+  color: var(--footer-muted);
+  text-decoration: none;
+}
+.text-muted-footer:hover {
+  color: #ffffff;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+.footer-links a {
+  color: var(--footer-muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+.footer-links a:hover {
+  color: #ffffff;
+}
+
+.footer-divider {
+  border: none;
+  border-top: 1px solid var(--footer-border);
+  opacity: 1;
+  margin: 0;
+}
+
+.hadeya-newsletter-input {
+  background-color: #302620;
+  border: none;
+  color: #ffffff;
+}
+.hadeya-newsletter-input::placeholder {
+  color: #8a7d70;
+}
+.hadeya-newsletter-input:focus {
+  background-color: #302620;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.hadeya-newsletter-btn {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border: none;
+  padding: 0 16px;
+}
+.hadeya-newsletter-btn:hover {
+  background-color: #b8422e;
+  color: #ffffff;
+}
