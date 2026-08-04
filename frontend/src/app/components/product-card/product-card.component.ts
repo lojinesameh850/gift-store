@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { NgIf } from '@angular/common';
 
 export interface Product {
   id: string;
@@ -9,14 +10,15 @@ export interface Product {
 
 @Component({
   selector: 'app-product-card',
-  imports: [],
+  standalone: true,
+  imports: [NgIf],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.css'
 })
-
 export class ProductCardComponent {
-  product = input.required<Product>();
+  @Input() product!: Product;
+
   onAddToCart() {
-    console.log('Product added:', this.product());
+    console.log('Product added:', this.product);
   }
 }
