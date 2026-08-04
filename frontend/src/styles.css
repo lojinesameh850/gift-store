@@ -1,1 +1,23 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
+/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+
+.top-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 3000;
+  background: linear-gradient(90deg, transparent, #e05a47, transparent);
+  background-size: 200% 100%;
+  animation: top-spinner-sweep 1s linear infinite;
+}
+
+@keyframes top-spinner-sweep {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
