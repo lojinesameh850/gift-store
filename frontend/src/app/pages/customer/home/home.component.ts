@@ -1,9 +1,9 @@
 import { Component, inject, resource } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
-import { HeroBannerComponent } from '../../components/hero-banner/hero-banner.component';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
-import { productService } from '../../services/productService';
+import { HeroBannerComponent } from '../../../components/hero-banner/hero-banner.component';
+import { ProductCardComponent } from '../../../components/product-card/product-card.component';
+import { productService } from '../../../services/productService';
 
 @Component({
   selector: 'app-home',

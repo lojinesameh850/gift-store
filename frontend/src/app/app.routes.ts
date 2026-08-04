@@ -9,6 +9,7 @@ import { customerLayoutComponent } from './layouts/customer/customerLayout';
 import { accountLayoutComponent } from './layouts/customer/account/accountLayout';
 import { profileComponent } from './pages/customer/account/profile/profilePage';
 import { wishlistComponent } from './pages/customer/account/wishlist/wishlistPage';
+import { CartComponent } from './pages/customer/cart/cart.component';
 import { HomeComponent } from './pages/customer/home/home.component';
 import { ShopComponent } from './pages/customer/shop/shop.component';
 
@@ -32,6 +33,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: HomeComponent },
       { path: 'shop', component: ShopComponent },
+      { path: 'cart', component: CartComponent },
       {
         path: 'account',
         component: accountLayoutComponent,
@@ -55,7 +57,5 @@ export const routes: Routes = [
     ]
   },
 
-  { path: 'cart', component: CartComponent },
-
-  { path: '**', redirectTo: 'error' }
+  { path: '**', redirectTo: '' }
 ];

@@ -3,8 +3,8 @@ const router = express.Router();
 const cartController = require('../controllers/cartController');
 const customerMiddleware = require('../middleware/customerMiddleware');
 
-// Get the authenticated user's cart
-router.get('/', mockAuthMiddleware, cartController.getCart);
+// Get cart items (This was missing!)
+router.get('/', customerMiddleware, cartController.getCart);
 
 // Add product to cart
 router.post('/', customerMiddleware, cartController.addToCart);

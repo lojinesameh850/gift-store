@@ -36,7 +36,7 @@ export class CartService {
 
   // TODO: Replace with real auth token headers once authentication is implemented
   private get mockHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'x-mock-user-id': '6a6ce40743e3c665222d3726' });
+    return new HttpHeaders({ 'x-mock-user-id': '6a72018b7c6eba38a1e88c5f' });
   }
 
   constructor(private http: HttpClient) { }

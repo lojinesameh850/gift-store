@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { NgFor } from '@angular/common';
-import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ProductCardComponent } from '../../../components/product-card/product-card.component';
 
 @Component({
   selector: 'app-shop',
@@ -38,7 +38,7 @@ export class ShopComponent implements OnInit {
       }
     });
   }
-  
+
 
   onTagSelect(event: Event, tag: any) {
     const isChecked = (event.target as HTMLInputElement).checked;
