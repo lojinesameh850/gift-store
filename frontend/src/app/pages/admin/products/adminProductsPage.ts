@@ -1,19 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-
-// PrimeNG Modules
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
-import { DialogModule } from 'primeng/dialog';
-import { TagModule } from 'primeng/tag';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { CheckboxModule } from 'primeng/checkbox';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { TextareaModule } from 'primeng/textarea';
 
 import { adminProductService, product } from '../../../services/admin/adminProductService';
 import { adminCategoryService, category } from '../../../services/admin/adminCategoryService';
@@ -22,45 +10,34 @@ import { adminTagService, tag } from '../../../services/admin/adminTagService';
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    InputTextModule,
-    SelectModule,
-    DialogModule,
-    TagModule,
-    InputNumberModule,
-    CheckboxModule,
-    MultiSelectModule,
-    TextareaModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './adminProductsPage.html',
   styleUrl: './adminProductsPage.css'
 })
 export class adminProductsPageComponent implements OnInit {
-  products: product[] = [];
-  categories: category[] = [];
-  tags: tag[] = [];
-  isLoading = true;
+  products = signal<product[]>([]);
+  categories = signal<category[]>([]);
+  tags = signal<tag[]>([]);
+  isLoading = signal(true);
 
-  total = 0;
-  page = 1;
-  limit = 10;
+  total = signal(0);
+  page = signal(1);
+  limit = signal(10);
 
-  searchTerm = '';
+  totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.limit())));
+  pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+  searchTerm = signal('');
   private searchChanged = new Subject<string>();
 
-  categoryOptions: { label: string; value: string }[] = [];
-  selectedCategoryFilter: string | null = null;
+  categoryOptions = signal<{ label: string; value: string }[]>([]);
+  selectedCategoryFilter = signal<string | null>(null);
 
-  showModal = false;
-  editingId: string | null = null;
+  showModal = signal(false);
+  editingId = signal<string | null>(null);
   productForm!: FormGroup;
-  isSaving = false;
-  errorMessage = '';
+  isSaving = signal(false);
+  errorMessage = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -75,14 +52,14 @@ export class adminProductsPageComponent implements OnInit {
       description: ['', Validators.required],
       price: [0, [Validators.required, Validators.min(0)]],
       category: [null, Validators.required],
-      tags: [[]],
+      tags: [[] as string[]],
       stock: [0, [Validators.required, Validators.min(0)]],
       isFeatured: [false],
       isActive: [true]
     });
 
     this.searchChanged.pipe(debounceTime(350), distinctUntilChanged()).subscribe(() => {
-      this.page = 1;
+      this.page.set(1);
       this.loadProducts();
     });
 
@@ -93,61 +70,65 @@ export class adminProductsPageComponent implements OnInit {
   private loadFilters(): void {
     this.categoryService.getAll().subscribe({
       next: (res: { data: category[] }) => {
-        this.categories = res.data;
-        this.categoryOptions = res.data.map((c: category) => ({ label: c.name, value: c._id }));
+        this.categories.set(res.data);
+        this.categoryOptions.set(res.data.map((c: category) => ({ label: c.name, value: c._id })));
       },
       error: (err: any) => console.error('Failed to load categories:', err)
     });
 
     this.tagService.getAll().subscribe({
-      next: (res: { data: tag[] }) => (this.tags = res.data),
+      next: (res: { data: tag[] }) => this.tags.set(res.data),
       error: (err: any) => console.error('Failed to load tags:', err)
     });
   }
 
   loadProducts(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.productService
       .getAll({
-        search: this.searchTerm || undefined,
-        category: this.selectedCategoryFilter || undefined,
-        page: this.page,
-        limit: this.limit
+        search: this.searchTerm() || undefined,
+        category: this.selectedCategoryFilter() || undefined,
+        page: this.page(),
+        limit: this.limit()
       })
       .subscribe({
         next: (res: { data: product[]; total: number }) => {
-          this.products = res.data;
-          this.total = res.total;
-          this.isLoading = false;
+          this.products.set(res.data);
+          this.total.set(res.total);
+          this.isLoading.set(false);
         },
         error: (err: any) => {
           console.error('Failed to load products:', err);
-          this.isLoading = false;
+          this.isLoading.set(false);
         }
       });
   }
 
-  onSearchInput(valueOrEvent: string | Event): void {
-    let query = '';
-    if (typeof valueOrEvent === 'string') {
-      query = valueOrEvent;
-    } else if (valueOrEvent && valueOrEvent.target) {
-      query = (valueOrEvent.target as HTMLInputElement).value;
-    }
-
-    this.searchTerm = query;
+  onSearchInput(event: Event): void {
+    const query = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(query);
     this.searchChanged.next(query);
   }
 
-  onCategoryFilterChange(): void {
-    this.page = 1;
+  onCategoryFilterChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedCategoryFilter.set(value || null);
+    this.page.set(1);
     this.loadProducts();
   }
 
-  onPageChange(event: { first: number; rows: number }): void {
-    this.page = Math.floor(event.first / event.rows) + 1;
-    this.limit = event.rows;
+  goToPage(p: number): void {
+    if (p < 1 || p > this.totalPages() || p === this.page()) return;
+    this.page.set(p);
     this.loadProducts();
+  }
+
+  prevPage(): void {
+    this.goToPage(this.page() - 1);
+  }
+
+  nextPage(): void {
+    this.goToPage(this.page() + 1);
   }
 
   categoryName(cat: product['category']): string {
@@ -161,9 +142,21 @@ export class adminProductsPageComponent implements OnInit {
     return { label: 'In Stock', severity: 'success' };
   }
 
+  isTagSelected(id: string): boolean {
+    const current: string[] = this.productForm.get('tags')?.value || [];
+    return current.includes(id);
+  }
+
+  toggleTag(id: string): void {
+    const control = this.productForm.get('tags');
+    const current: string[] = control?.value || [];
+    const next = current.includes(id) ? current.filter((t) => t !== id) : [...current, id];
+    control?.setValue(next);
+  }
+
   openAddModal(): void {
-    this.editingId = null;
-    this.errorMessage = '';
+    this.editingId.set(null);
+    this.errorMessage.set('');
     this.productForm.reset({
       name: '',
       description: '',
@@ -174,12 +167,12 @@ export class adminProductsPageComponent implements OnInit {
       isFeatured: false,
       isActive: true
     });
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   openEditModal(p: product): void {
-    this.editingId = p._id;
-    this.errorMessage = '';
+    this.editingId.set(p._id);
+    this.errorMessage.set('');
     this.productForm.patchValue({
       name: p.name,
       description: p.description,
@@ -190,33 +183,34 @@ export class adminProductsPageComponent implements OnInit {
       isFeatured: p.isFeatured,
       isActive: p.isActive
     });
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   closeModal(): void {
-    this.showModal = false;
-    this.editingId = null;
+    this.showModal.set(false);
+    this.editingId.set(null);
   }
 
   onSave(): void {
     if (this.productForm.invalid) return;
-    this.isSaving = true;
-    this.errorMessage = '';
+    this.isSaving.set(true);
+    this.errorMessage.set('');
 
     const payload = this.productForm.value;
-    const request = this.editingId
-      ? this.productService.update(this.editingId, payload)
+    const id = this.editingId();
+    const request = id
+      ? this.productService.update(id, payload)
       : this.productService.create(payload);
 
     request.subscribe({
       next: () => {
-        this.isSaving = false;
+        this.isSaving.set(false);
         this.closeModal();
         this.loadProducts();
       },
       error: (err: any) => {
-        this.isSaving = false;
-        this.errorMessage = err?.error?.message || 'Failed to save product.';
+        this.isSaving.set(false);
+        this.errorMessage.set(err?.error?.message || 'Failed to save product.');
       }
     });
   }

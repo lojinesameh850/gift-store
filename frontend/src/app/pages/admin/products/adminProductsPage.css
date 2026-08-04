@@ -11,6 +11,42 @@
   color: #1a1a1a;
 }
 
+.btn-primary {
+  background-color: #e05a47;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-primary:hover {
+  background-color: #c84937;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f1f5f9;
+  border: none;
+  color: #334155;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
+
+/* Toolbar */
 .toolbar {
   display: flex;
   align-items: center;
@@ -19,43 +55,101 @@
 }
 
 .search-input {
+  position: relative;
   flex-grow: 1;
   max-width: 340px;
 }
 
+.search-input .search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
 .search-input input {
   width: 100%;
+  padding: 0.65rem 0.85rem 0.65rem 2.4rem;
+  border: 1px solid #e5e0d8;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.9rem;
+  outline: none;
 }
 
-::ng-deep .category-filter {
-  min-width: 180px;
-}
-
-::ng-deep .btn-primary.p-button {
-  background-color: #e05a47;
+.search-input input:focus {
   border-color: #e05a47;
+}
+
+.filter-select {
+  position: relative;
+  min-width: 190px;
+}
+
+.filter-select .filter-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.filter-select select {
+  width: 100%;
+  appearance: none;
+  padding: 0.65rem 0.85rem 0.65rem 2.4rem;
+  border: 1px solid #e5e0d8;
   border-radius: 10px;
+  background: #fff;
+  font-size: 0.9rem;
   font-weight: 600;
-}
-
-::ng-deep .btn-primary.p-button:hover {
-  background-color: #c84937;
-  border-color: #c84937;
-}
-
-::ng-deep .btn-secondary.p-button {
-  background-color: #f1f5f9;
-  border-color: #f1f5f9;
   color: #334155;
-  border-radius: 10px;
-  font-weight: 600;
+  cursor: pointer;
+  outline: none;
 }
 
-::ng-deep .products-table {
+/* Table */
+.table-card {
   background: #ffffff;
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.products-table thead th {
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.products-table tbody td {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid #f8fafc;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.products-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.actions-col {
+  width: 100px;
 }
 
 .product-cell {
@@ -81,25 +175,67 @@
   color: #1a1a1a;
 }
 
+.category-cell {
+  color: #64748b;
+}
+
+.price-cell {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.status-pill.success {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.status-pill.warn {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-pill.danger {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
 .actions {
   display: flex;
   gap: 0.35rem;
 }
 
-::ng-deep .icon-btn.p-button {
+.icon-btn {
   background: none;
   border: none;
   color: #64748b;
   width: 2rem;
   height: 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-::ng-deep .icon-btn.p-button:hover {
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-btn:hover {
   background-color: #f1f5f9;
   color: #1e293b;
 }
 
-::ng-deep .icon-btn.danger.p-button:hover {
+.icon-btn.danger:hover {
   background-color: #fef2f2;
   color: #dc2626;
 }
@@ -110,7 +246,71 @@
   padding: 2rem 0;
 }
 
-/* Modal form */
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.6rem;
+  border-radius: 10px;
+  border: 1px solid #eee7dd;
+  background: #fff;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+  background-color: #f8fafc;
+}
+
+.page-btn.active {
+  background-color: #e05a47;
+  border-color: #e05a47;
+  color: #fff;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-box h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  color: #1a1a1a;
+}
+
 .product-form {
   display: flex;
   flex-direction: column;
@@ -140,6 +340,32 @@
 
 .form-control {
   width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e0d8;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #e05a47;
+}
+
+.tag-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  padding: 0.5rem 0.1rem;
+}
+
+.tag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #334155;
+  cursor: pointer;
 }
 
 .checkbox-row {
@@ -153,6 +379,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 
 .error-text {

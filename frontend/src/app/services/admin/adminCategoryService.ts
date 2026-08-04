@@ -35,9 +35,6 @@ interface productListResponse {
   providedIn: 'root'
 })
 export class adminCategoryService {
-  // NOTE: no auth interceptor was present in the shared frontend code, so the
-  // admin token is attached explicitly here. Swap this for an HttpInterceptor
-  // once one exists - same token, just applied globally instead of per-call.
   private apiUrl = 'http://localhost:5000/api/admin/categories';
   private productsUrl = 'http://localhost:5000/api/admin/products';
 

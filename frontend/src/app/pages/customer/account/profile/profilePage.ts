@@ -2,7 +2,6 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { customerService, customerProfile, shippingAddress } from '../../../../services/customer/customerService';
-import { notificationService } from '../../../../services/notificationService';
 
 @Component({
   selector: 'app-profile',
@@ -31,8 +30,7 @@ export class profileComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private customerService: customerService,
-    private notifications: notificationService
+    private customerService: customerService
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +83,6 @@ export class profileComponent implements OnInit {
         // Header derives from these signals automatically - no reload needed.
         this.firstName.set(updatedProfile.firstName);
         this.lastName.set(updatedProfile.lastName);
-        this.notifications.showSuccess('Profile changes saved successfully');
       },
       error: (err) => {
         console.error('Failed to save profile:', err);

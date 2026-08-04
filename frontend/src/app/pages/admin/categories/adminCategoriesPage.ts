@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -21,14 +21,14 @@ const SWATCHES = ['#f6c9c1', '#f4e2a0', '#c9e4d1', '#c8d6f2', '#f3cbe6', '#d9c9f
   styleUrl: './adminCategoriesPage.css'
 })
 export class adminCategoriesPageComponent implements OnInit {
-  categories: categoryRow[] = [];
-  isLoading = true;
+  categories = signal<categoryRow[]>([]);
+  isLoading = signal(true);
 
-  showModal = false;
-  editingId: string | null = null;
+  showModal = signal(false);
+  editingId = signal<string | null>(null);
   categoryForm!: FormGroup;
-  isSaving = false;
-  errorMessage = '';
+  isSaving = signal(false);
+  errorMessage = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -50,16 +50,16 @@ export class adminCategoriesPageComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.categoryService.getAll().subscribe({
       next: (res) => {
-        this.categories = res.data.map((c) => ({ ...c, productCount: null, swatch: this.swatchFor(c._id) }));
-        this.isLoading = false;
+        this.categories.set(res.data.map((c) => ({ ...c, productCount: null, swatch: this.swatchFor(c._id) })));
+        this.isLoading.set(false);
         this.loadProductCounts();
       },
       error: (err) => {
         console.error('Failed to load categories:', err);
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
   }
@@ -67,54 +67,58 @@ export class adminCategoriesPageComponent implements OnInit {
   // Product counts are fetched separately (one lightweight call per category)
   // since the categories endpoint doesn't return them.
   private loadProductCounts(): void {
-    if (this.categories.length === 0) return;
-    const calls = this.categories.map((c) => this.categoryService.getProductCount(c._id));
+    const rows = this.categories();
+    if (rows.length === 0) return;
+    const calls = rows.map((c) => this.categoryService.getProductCount(c._id));
     forkJoin(calls).subscribe({
       next: (results) => {
-        results.forEach((res, i) => (this.categories[i].productCount = res.total));
+        this.categories.update((current) =>
+          current.map((c, i) => ({ ...c, productCount: results[i].total }))
+        );
       },
       error: (err) => console.error('Failed to load product counts:', err)
     });
   }
 
   openAddModal(): void {
-    this.editingId = null;
-    this.errorMessage = '';
+    this.editingId.set(null);
+    this.errorMessage.set('');
     this.categoryForm.reset({ name: '', description: '', isActive: true });
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   openEditModal(cat: categoryRow): void {
-    this.editingId = cat._id;
-    this.errorMessage = '';
+    this.editingId.set(cat._id);
+    this.errorMessage.set('');
     this.categoryForm.patchValue({ name: cat.name, description: cat.description, isActive: cat.isActive });
-    this.showModal = true;
+    this.showModal.set(true);
   }
 
   closeModal(): void {
-    this.showModal = false;
-    this.editingId = null;
+    this.showModal.set(false);
+    this.editingId.set(null);
   }
 
   onSave(): void {
     if (this.categoryForm.invalid) return;
-    this.isSaving = true;
-    this.errorMessage = '';
+    this.isSaving.set(true);
+    this.errorMessage.set('');
 
     const payload = this.categoryForm.value;
-    const request = this.editingId
-      ? this.categoryService.update(this.editingId, payload)
+    const id = this.editingId();
+    const request = id
+      ? this.categoryService.update(id, payload)
       : this.categoryService.create(payload);
 
     request.subscribe({
       next: () => {
-        this.isSaving = false;
+        this.isSaving.set(false);
         this.closeModal();
         this.loadCategories();
       },
       error: (err) => {
-        this.isSaving = false;
-        this.errorMessage = err?.error?.message || 'Failed to save category.';
+        this.isSaving.set(false);
+        this.errorMessage.set(err?.error?.message || 'Failed to save category.');
       }
     });
   }

@@ -3,10 +3,10 @@
   <button class="btn-primary" (click)="openAddModal()">+ Add Category</button>
 </div>
 
-<div *ngIf="isLoading" class="empty-state">Loading categories...</div>
+<div *ngIf="isLoading()" class="empty-state">Loading categories...</div>
 
-<div *ngIf="!isLoading" class="category-grid">
-  <div class="category-card" *ngFor="let cat of categories">
+<div *ngIf="!isLoading()" class="category-grid">
+  <div class="category-card" *ngFor="let cat of categories()">
     <div class="card-top">
       <span class="swatch" [style.background]="cat.swatch"></span>
       <div class="actions">
@@ -26,15 +26,15 @@
     <span class="status-pill" [class.inactive]="!cat.isActive">{{ cat.isActive ? 'Active' : 'Inactive' }}</span>
   </div>
 
-  <div *ngIf="categories.length === 0" class="empty-state">
+  <div *ngIf="categories().length === 0" class="empty-state">
     No categories yet. Click "+ Add Category" to create your first one.
   </div>
 </div>
 
 <!-- Add/Edit Modal -->
-<div class="modal-backdrop" *ngIf="showModal">
+<div class="modal-backdrop" *ngIf="showModal()">
   <div class="modal-box">
-    <h3>{{ editingId ? 'Edit Category' : 'Add Category' }}</h3>
+    <h3>{{ editingId() ? 'Edit Category' : 'Add Category' }}</h3>
 
     <form [formGroup]="categoryForm" (ngSubmit)="onSave()">
       <div class="form-group">
@@ -53,12 +53,12 @@
         </label>
       </div>
 
-      <p class="error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="error-text" *ngIf="errorMessage()">{{ errorMessage() }}</p>
 
       <div class="modal-actions">
         <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
-        <button type="submit" class="btn-primary" [disabled]="categoryForm.invalid || isSaving">
-          {{ isSaving ? 'Saving...' : 'Save Category' }}
+        <button type="submit" class="btn-primary" [disabled]="categoryForm.invalid || isSaving()">
+          {{ isSaving() ? 'Saving...' : 'Save Category' }}
         </button>
       </div>
     </form>
