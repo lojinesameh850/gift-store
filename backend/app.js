@@ -7,6 +7,7 @@ const connectDB = require('./src/config/database');
 
 // 1. Import your customer routes
 const customerRoutes = require('./src/routes/customerRoutes'); // Adjust path to match project structure
+const customerProductRoutes = require('./src/routes/customerProductRoutes');
 
 // 2. Import cart routes
 const cartRoutes = require('./src/routes/cartRoutes');
@@ -46,6 +47,9 @@ app.use('/api/auth', authRoutes);
 
 // 3. Mount your Customer Account API endpoints
 app.use('/api/account', customerRoutes);
+
+// Public product listing/details endpoints
+app.use('/api/products', customerProductRoutes);
 
 // 4. Mount Cart API endpoints
 app.use('/api/cart', cartRoutes);

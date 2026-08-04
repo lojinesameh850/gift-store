@@ -2,9 +2,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
 // Verifies the JWT, attaches the real logged-in user to req.user, and requires
-// role === 'admin'. Same activeToken check as authMiddleware, so an admin's
-// token stops working immediately after logout too - not just customers.
-const adminMiddleware = async (req, res, next) => {
+// role === 'customer'. Replaces mockAuth.js on cart / customer-account routes.
+const customerMiddleware = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -23,8 +22,8 @@ const adminMiddleware = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'You are logged out. Please log in again.' });
     }
 
-    if (user.role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access Denied. Admin only.' });
+    if (user.role !== 'customer') {
+      return res.status(403).json({ success: false, message: 'Access Denied. Customer only.' });
     }
 
     req.user = { id: user._id.toString(), role: user.role };
@@ -34,4 +33,4 @@ const adminMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = adminMiddleware;
+module.exports = customerMiddleware;

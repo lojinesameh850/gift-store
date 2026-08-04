@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
-const mockAuthMiddleware = require('../middleware/mockAuth');
+const customerMiddleware = require('../middleware/customerMiddleware');
 
 // Get the authenticated user's cart
 router.get('/', mockAuthMiddleware, cartController.getCart);
 
 // Add product to cart
-router.post('/', mockAuthMiddleware, cartController.addToCart);
+router.post('/', customerMiddleware, cartController.addToCart);
 
 // Remove product from cart
-router.delete('/:productId', mockAuthMiddleware, cartController.removeFromCart);
+router.delete('/:productId', customerMiddleware, cartController.removeFromCart);
 
 // Update product quantity in cart
-router.put('/:productId', mockAuthMiddleware, cartController.updateQuantity);
+router.put('/:productId', customerMiddleware, cartController.updateQuantity);
 
 module.exports = router;
