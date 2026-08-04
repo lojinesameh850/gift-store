@@ -1,1 +1,77 @@
-<p>shop works!</p>
+<div class="shop-page">
+  <!-- Header Section -->
+  <header class="shop-header">
+    <div class="header-titles">
+      <h1>Shop All Gifts</h1>
+      <span class="product-count">{{ products.length || 128 }} products</span>
+    </div>
+    <div class="sort-container">
+      <label for="sort">Sort by:</label>
+      <select id="sort">
+        <option value="popular">Popular</option>
+        <option value="low-high">Price: Low to High</option>
+        <option value="high-low">Price: High to Low</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <div class="shop-content">
+    <!-- Sidebar Filters -->
+    <aside class="sidebar">
+      <!-- Category Filter -->
+      <div class="filter-group">
+        <h4>Category</h4>
+        <ul>
+          <li><label><input type="checkbox" checked /> Home & Living</label></li>
+          <li><label><input type="checkbox" /> Jewelry</label></li>
+          <li><label><input type="checkbox" /> Personalized</label></li>
+          <li><label><input type="checkbox" /> Stationery</label></li>
+          <li><label><input type="checkbox" /> Sweets & Hampers</label></li>
+          <li><label><input type="checkbox" /> Kids</label></li>
+          <li><label><input type="checkbox" /> Corporate</label></li>
+        </ul>
+      </div>
+
+      <!-- Price Range Filter -->
+      <div class="filter-group">
+        <h4>Price Range</h4>
+        <ul>
+          <li><label><input type="checkbox" /> Under EGP 250</label></li>
+          <li><label><input type="checkbox" /> EGP 250 - 500</label></li>
+          <li><label><input type="checkbox" /> EGP 500 - 1000</label></li>
+          <li><label><input type="checkbox" /> Above EGP 1000</label></li>
+        </ul>
+      </div>
+
+      <!-- Tags / Occasion Filter -->
+      <div class="filter-group">
+        <h4>Tags</h4>
+        <ul>
+          <li *ngFor="let tag of tags">
+            <label>
+              <input type="checkbox" [value]="tag.name" (change)="onTagSelect($event, tag)" />
+              <span>{{ tag.name }}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Product Grid & Pagination Container -->
+    <div class="products-section">
+      <main class="products-grid">
+        <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
+      </main>
+
+      <!-- Pagination Controls -->
+      <div class="pagination">
+        <button class="page-btn nav-btn">&lt;</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn nav-btn">&gt;</button>
+      </div>
+    </div>
+  </div>
+</div>
