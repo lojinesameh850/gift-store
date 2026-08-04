@@ -5,6 +5,9 @@ import { wishlistComponent } from './pages/account/wishlistPage';
 import { ShopComponent } from './pages/shop/shop.component';
 
 export const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: '**', redirectTo: '' },
+  // Account section: shared sidebar layout with profile & wishlist as children
   { path: '', redirectTo: 'shop', pathMatch: 'full' },
   { path: 'shop', component: ShopComponent },
   {
