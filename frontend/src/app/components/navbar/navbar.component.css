@@ -30,12 +30,38 @@
   border-color: var(--nav-primary);
 }
 
-.hadeya-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--nav-primary);
-  display: block;
+.hadeya-cart-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--nav-ink);
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.hadeya-cart-icon i {
+  font-size: 23px;
+  line-height: 1;
+}
+
+.hadeya-cart-icon.active {
+  color: var(--nav-primary) !important;
+}
+
+.hadeya-profile-icon {
+  color: var(--nav-ink);
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.hadeya-profile-icon i {
+  font-size: 23px;
+  line-height: 1;
+}
+
+.hadeya-profile-icon.active {
+  color: var(--nav-primary) !important;
 }
 
 @media (min-width: 992px) {

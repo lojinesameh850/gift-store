@@ -5,10 +5,11 @@ import { accountLayoutComponent } from './pages/account/accountLayout';
 import { profileComponent } from './pages/account/profilePage';
 import { wishlistComponent } from './pages/account/wishlistPage';
 
+export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'shop', component: ShopComponent },
   { path: 'account/profile', component: profileComponent },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' },
   // Redirect root URL directly to account page FOR NOW
   { path: '', redirectTo: 'account/profile', pathMatch: 'full' },
 

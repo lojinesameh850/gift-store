@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+require("./categoryModel");
+require("./tagModel");
+
 const productSchema = new mongoose.Schema(
 	{
 		name: {
@@ -77,9 +80,8 @@ productSchema.index(
 	{ unique: true, partialFilterExpression: { isDeleted: { $ne: true } } },
 );
 
-productSchema.pre(/^find/, function (next) {
-	this.find({ isDeleted: { $ne: true } });
-	next();
+productSchema.pre(/^find/, function () {
+	this.where({ isDeleted: { $ne: true } });
 });
 
 module.exports = mongoose.model("Product", productSchema);
