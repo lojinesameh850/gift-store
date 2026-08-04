@@ -4,11 +4,14 @@ import { ShopComponent } from './pages/shop/shop.component';
 import { accountLayoutComponent } from './pages/account/accountLayout';
 import { profileComponent } from './pages/account/profilePage';
 import { wishlistComponent } from './pages/account/wishlistPage';
+import { CartComponent } from './pages/cart/cart.component';
+export const routes: Routes = [
 
   { path: '', component: HomeComponent },
   { path: 'shop', component: ShopComponent },
+  { path: 'cart', component: CartComponent },
   { path: 'account/profile', component: profileComponent },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: '' },
   // Redirect root URL directly to account page FOR NOW
   { path: '', redirectTo: 'account/profile', pathMatch: 'full' },
 
