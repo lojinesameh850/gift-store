@@ -1,6 +1,25 @@
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
 
+// GET /api/cart (Fetch the authenticated user's cart with product details)
+exports.getCart = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate({
+      path: 'cart.product',
+      select: 'name price discount images category',
+      populate: { path: 'category', select: 'name' }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ success: true, data: user.cart });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 // POST /api/cart (Add a product to the authenticated user's cart)
 exports.addToCart = async (req, res) => {
   try {
