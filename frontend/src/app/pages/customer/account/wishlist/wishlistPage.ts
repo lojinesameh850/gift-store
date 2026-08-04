@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { customerService, wishlistItem } from '../../../../services/customer/customerService';
-import { notificationService } from '../../../../services/notificationService';
 
 @Component({
   selector: 'app-wishlist',
@@ -18,7 +17,6 @@ export class wishlistComponent implements OnInit {
 
   constructor(
     private customerService: customerService,
-    private notifications: notificationService,
     private router: Router
   ) {}
 
@@ -51,7 +49,6 @@ export class wishlistComponent implements OnInit {
         // Update local state directly instead of reloading the whole page.
         this.items.update((list) => list.filter((i) => i._id !== item._id));
         this.removingId.set(null);
-        this.notifications.showSuccess('Removed from wishlist');
       },
       error: () => {
         this.removingId.set(null);

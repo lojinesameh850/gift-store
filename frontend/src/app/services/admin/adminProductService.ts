@@ -69,11 +69,15 @@ const API_URL = 'http://localhost:5000'; // Define it right here
 
 @Injectable({ providedIn: 'root' })
 export class adminProductService {
-  // Adjust to match wherever adminProductRoutes is mounted in your Express app
-  // (e.g. app.use('/api/admin/products', adminProductRoutes)).
-  private readonly baseUrl = `${API_URL}/admin/products`;
+  // Mounted in app.js as: app.use('/api/admin/products', adminProductRoutes)
+  private readonly baseUrl = `${API_URL}/api/admin/products`;
 
   constructor(private http: HttpClient) {}
+
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem('admin_token') || '';
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
 
   getAll(query: productQuery = {}): Observable<productListResponse> {
     let params = new HttpParams();
@@ -82,22 +86,30 @@ export class adminProductService {
         params = params.set(key, String(value));
       }
     });
-    return this.http.get<productListResponse>(this.baseUrl, { params });
+    return this.http.get<productListResponse>(this.baseUrl, { params, headers: this.authHeaders() });
   }
 
   getById(id: string): Observable<{ success: boolean; data: product }> {
-    return this.http.get<{ success: boolean; data: product }>(`${this.baseUrl}/${id}`);
+    return this.http.get<{ success: boolean; data: product }>(`${this.baseUrl}/${id}`, {
+      headers: this.authHeaders()
+    });
   }
 
   create(payload: Partial<productPayload>): Observable<{ success: boolean; message: string; data: product }> {
-    return this.http.post<{ success: boolean; message: string; data: product }>(this.baseUrl, payload);
+    return this.http.post<{ success: boolean; message: string; data: product }>(this.baseUrl, payload, {
+      headers: this.authHeaders()
+    });
   }
 
   update(id: string, payload: Partial<productPayload>): Observable<{ success: boolean; message: string; data: product }> {
-    return this.http.put<{ success: boolean; message: string; data: product }>(`${this.baseUrl}/${id}`, payload);
+    return this.http.put<{ success: boolean; message: string; data: product }>(`${this.baseUrl}/${id}`, payload, {
+      headers: this.authHeaders()
+    });
   }
 
   delete(id: string): Observable<{ success: boolean; message: string }> {
-    return this.http.delete<{ success: boolean; message: string }>(`${this.baseUrl}/${id}`);
+    return this.http.delete<{ success: boolean; message: string }>(`${this.baseUrl}/${id}`, {
+      headers: this.authHeaders()
+    });
   }
 }

@@ -6,14 +6,12 @@ import { provideClientHydration, withEventReplay, withNoIncrementalHydration } f
 
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './interceptors/authInterceptor';
-import { loadingInterceptor } from './interceptors/loadingInterceptor';
-import { notificationInterceptor } from './interceptors/notificationInterceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(withEventReplay(), withNoIncrementalHydration()),
-    provideHttpClient(withInterceptors([authInterceptor, loadingInterceptor, notificationInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor]))
   ]
 };
