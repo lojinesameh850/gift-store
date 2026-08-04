@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 
+require("./categoryModel");
+require("./tagModel");
+
 const productSchema = new mongoose.Schema(
 	{
 		name: {
@@ -10,7 +13,6 @@ const productSchema = new mongoose.Schema(
 		slug: {
 			type: String,
 			required: [true, "Product slug is required"],
-			unique: true,
 			lowercase: true,
 			trim: true,
 		},
@@ -54,14 +56,32 @@ const productSchema = new mongoose.Schema(
 			type: Boolean,
 			default: true,
 		},
+		isDeleted: {
+			type: Boolean,
+			default: false,
+			select: false,
+		},
+		deletedAt: {
+			type: Date,
+			select: false,
+		},
 	},
 	{
 		timestamps: true,
-	}
+	},
 );
 
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ category: 1, price: 1 });
 productSchema.index({ tags: 1 });
+
+productSchema.index(
+	{ slug: 1 },
+	{ unique: true, partialFilterExpression: { isDeleted: { $ne: true } } },
+);
+
+productSchema.pre(/^find/, function () {
+	this.where({ isDeleted: { $ne: true } });
+});
 
 module.exports = mongoose.model("Product", productSchema);
