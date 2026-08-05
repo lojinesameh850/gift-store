@@ -1,0 +1,66 @@
+<div class="page-header">
+  <h1>Tags</h1>
+  <button class="btn-primary" (click)="openAddModal()">+ Add Tag</button>
+</div>
+
+<div *ngIf="isLoading()" class="empty-state">Loading tags...</div>
+
+<div *ngIf="!isLoading()" class="tag-grid">
+  <div class="tag-card" *ngFor="let t of tags()">
+    <div class="card-top">
+      <span class="swatch" [style.background]="t.swatch"></span>
+      <div class="actions">
+        <button class="icon-btn" (click)="openEditModal(t)" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+        </button>
+        <button class="icon-btn danger" (click)="onDelete(t)" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
+      </div>
+    </div>
+    <h3 class="tag-name">{{ t.name }}</h3>
+    <p class="tag-count">
+      <ng-container *ngIf="t.productCount === null">loading count...</ng-container>
+      <ng-container *ngIf="t.productCount !== null">{{ t.productCount }} product{{ t.productCount === 1 ? '' : 's' }}</ng-container>
+    </p>
+    <span class="status-pill" [class.inactive]="!t.isActive">{{ t.isActive ? 'Active' : 'Inactive' }}</span>
+  </div>
+
+  <div *ngIf="tags().length === 0" class="empty-state">
+    No tags yet. Click "+ Add Tag" to create your first one.
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-backdrop" *ngIf="showModal()">
+  <div class="modal-box">
+    <h3>{{ editingId() ? 'Edit Tag' : 'Add Tag' }}</h3>
+
+    <form [formGroup]="tagForm" (ngSubmit)="onSave()">
+      <div class="form-group">
+        <label>Name *</label>
+        <input type="text" formControlName="name" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" formControlName="isActive" /> Active
+        </label>
+      </div>
+
+      <p class="error-text" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="tagForm.invalid || isSaving()">
+          {{ isSaving() ? 'Saving...' : 'Save Tag' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

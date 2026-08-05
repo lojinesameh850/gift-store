@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const customerController = require('../controllers/customerController');
-const mockAuthMiddleware = require('../middleware/mockAuth'); // Temp mock middleware
+const customerMiddleware = require('../middleware/customerMiddleware');
 
-// Protect all routes with auth middleware
-router.get('/profile', mockAuthMiddleware, customerController.getProfile);
-router.put('/profile', mockAuthMiddleware, customerController.updateProfile);
+// Protect all routes with real customer authentication
+router.get('/profile', customerMiddleware, customerController.getProfile);
+router.put('/profile', customerMiddleware, customerController.updateProfile);
 
 // Wishlist
-router.get('/wishlist', mockAuthMiddleware, customerController.getWishlist);
-router.post('/wishlist/:productId', mockAuthMiddleware, customerController.addToWishlist);
-router.delete('/wishlist/:productId', mockAuthMiddleware, customerController.removeFromWishlist);
+router.get('/wishlist', customerMiddleware, customerController.getWishlist);
+router.post('/wishlist/:productId', customerMiddleware, customerController.addToWishlist);
+router.delete('/wishlist/:productId', customerMiddleware, customerController.removeFromWishlist);
 
 module.exports = router;

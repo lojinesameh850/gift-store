@@ -27,6 +27,7 @@
     "@angular/ssr": "^22.1.2",
     "bootstrap": "^5.3.8",
     "express": "^4.18.2",
+    "primeng": "^22.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

@@ -5,6 +5,7 @@ module.exports = async (req, res, next) => {
   try {
     let userId = req.headers['x-mock-user-id'] || process.env.MOCK_USER_ID;
 
+<<<<<<< HEAD
     if (!userId || !/^[a-fA-F0-9]{24}$/.test(userId)) {
       const fallbackUser = await User.findOne({ role: 'customer' }).select('_id').lean();
       if (!fallbackUser) {
@@ -21,6 +22,12 @@ module.exports = async (req, res, next) => {
         userId = fallbackUser._id.toString();
       }
     }
+=======
+  req.user = {
+    id: '6a6ad0314b076fc35220c1f8',
+    role: 'admin'
+  };
+>>>>>>> 04b7d90cda87f1353f60c7dad45a0c90b5e1ba3d
 
     req.user = {
       id: userId,

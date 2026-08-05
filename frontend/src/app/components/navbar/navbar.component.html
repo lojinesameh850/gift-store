@@ -33,12 +33,6 @@
         <li class="nav-item">
           <a routerLink="/shop" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">Shop</a>
         </li>
-        <li class="nav-item">
-          <a routerLink="/returns" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">Returns</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/about" routerLinkActive="active" (click)="closeMenu()" class="nav-link text-ink">About</a>
-        </li>
       </ul>
 
       <!-- Search + icons -->
@@ -60,21 +54,13 @@
           />
         </div>
 
-        <a routerLink="/account/wishlist" class="text-ink d-flex" aria-label="Wishlist">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 21s-7.5-4.6-10-9.1C.5 8.8 2 5 6 5c2 0 3.5 1 4 2.5.5-1.5 2-2.5 4-2.5 4 0 5.5 3.8 4 6.9C19.5 16.4 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          </svg>
+        <a routerLink="/cart" routerLinkActive="active" class="hadeya-cart-icon text-ink d-flex" aria-label="Cart">
+          <i class="fa-solid fa-cart-shopping"></i>
         </a>
 
-        <a routerLink="/cart" class="text-ink d-flex" aria-label="Cart">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 6h15l-1.5 9h-12L6 6Zm0 0-1-3H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="9" cy="20" r="1.4" fill="currentColor"/>
-            <circle cx="17" cy="20" r="1.4" fill="currentColor"/>
-          </svg>
+        <a routerLink="/account/profile" routerLinkActive="active" class="hadeya-profile-icon text-ink d-flex" aria-label="Account">
+          <i class="fa-solid fa-circle-user"></i>
         </a>
-
-        <a routerLink="/account/profile" class="hadeya-avatar" aria-label="Account"></a>
       </div>
     </div>
   </div>
