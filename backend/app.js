@@ -15,6 +15,9 @@ const adminAuthRoutes = require('./src/routes/adminAuthRoutes');
 const adminProductRoutes = require('./src/routes/adminProductRoutes');
 const adminCategoryRoutes = require('./src/routes/adminCategoryRoutes');
 const adminTagRoutes = require('./src/routes/adminTagRoutes');
+const customerProductRoutes = require('./src/routes/customerProductRoutes');
+// Public tag routes (no admin auth required)
+const tagRoutes = require('./src/routes/tagRoutes');
 
 // NEW: Import auth routes (register/login/forgot-password/otp/reset-password)
 const authRoutes = require('./src/routes/authRoutes');
@@ -54,6 +57,10 @@ app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/products', adminProductRoutes);
 app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/tags', adminTagRoutes);
+app.use('/api/products', customerProductRoutes);
+
+// Public tags endpoint
+app.use('/api/tags', tagRoutes);
 
 const PORT = process.env.PORT || 5000;
 
