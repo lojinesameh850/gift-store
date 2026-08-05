@@ -1,0 +1,173 @@
+:host {
+  display: block;
+  min-height: 60vh;
+  padding: 3rem 1rem;
+}
+
+.customer-error-wrapper {
+  max-width: 650px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 404 Main Header Container */
+.errorCode {
+  font-size: 6rem;
+  margin: 0;
+  color: #2b2b2b; /* Dark text color matching your layout */
+  font-weight: 800;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.5rem;
+  line-height: 1;
+}
+
+/* Inline Animation Stage replacing the '0' */
+.animation-stage {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 140px;  /* Stage width for floating question marks */
+  height: 90px;   /* Height to let question marks float above without clipping */
+  margin: 0 0.25rem;
+}
+
+/* Base Logo Placement */
+.customer-logo-container {
+  color: #d95d46; /* Hadeya brand orange/red */
+  position: absolute;
+  bottom: 5px; /* Aligns visually with the baseline of the '4's */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Base Question Marks Style */
+.question-mark1-rising,
+.question-mark2-rising,
+.question-mark3-rising {
+  position: absolute;
+  bottom: 60px; /* Starts right above the bow */
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #d95d46;
+  opacity: 0;
+}
+
+/* Center Question Mark */
+.question-mark1-rising {
+  left: 50%;
+  animation: floatCenter 3s ease-out infinite;
+}
+
+/* Right Question Mark */
+.question-mark2-rising {
+  left: 65%;
+  animation: floatRight 3s ease-out 0.4s infinite;
+}
+
+/* Left Question Mark */
+.question-mark3-rising {
+  left: 35%;
+  animation: floatLeft 3s ease-out 0.8s infinite;
+}
+
+/* Phrase & Text Styles */
+.cute-phrase {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #2b2b2b;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 28px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background-color: #d95d46;
+  color: white;
+  border-color: #d95d46;
+}
+
+.btn-primary:hover {
+  background-color: #c44e39;
+  border-color: #c44e39;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #d95d46;
+  border-color: #d95d46;
+}
+
+.btn-secondary:hover {
+  background-color: #fcebe9;
+}
+
+/* Float Animations */
+@keyframes floatCenter {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-40px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes floatRight {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(25px) translateY(-35px) scale(1) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes floatLeft {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-35px) translateY(-35px) scale(1) rotate(-15deg);
+    opacity: 0;
+  }
+}
