@@ -1,6 +1,6 @@
 :host {
   display: block;
-  background-color: #faf7f2; /* اللون الخلفي الدافئ */
+  background-color: #faf5ef;
   min-height: 100vh;
   font-family: inherit;
   color: #2b2b2b;
@@ -12,7 +12,6 @@
   padding: 30px 40px;
 }
 
-/* Header */
 .shop-header {
   display: flex;
   justify-content: space-between;
@@ -49,13 +48,11 @@
   cursor: pointer;
 }
 
-/* Content Layout */
 .shop-content {
   display: flex;
   gap: 40px;
 }
 
-/* Sidebar Styling */
 .sidebar {
   width: 200px;
   flex-shrink: 0;
@@ -96,11 +93,10 @@
   width: 15px;
   height: 15px;
   border-radius: 4px;
-  accent-color: #e0533c; /* اللون البرتقالي المماثل للتصميم */
+  accent-color: #e15b43;
   cursor: pointer;
 }
 
-/* Products Section & Grid */
 .products-section {
   flex-grow: 1;
 }
@@ -111,7 +107,6 @@
   gap: 20px;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -136,9 +131,9 @@
 }
 
 .page-btn.active {
-  background-color: #e0533c;
+  background-color: #e15b43;
   color: #fff;
-  border-color: #e0533c;
+  border-color: #e15b43;
 }
 
 .page-btn:hover:not(.active) {
