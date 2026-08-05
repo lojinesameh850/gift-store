@@ -32,6 +32,17 @@ export const adminRoutes: Routes = [
           import('../../pages/admin/tags/adminTagsPage').then(
             (m) => m.adminTagsPageComponent
           )
+      },
+
+      // Explicit route for direct navigation/redirects
+      {
+        path: '404',
+        loadComponent: () => import('../../pages/admin/notFound/adminNotFoundPage').then(m => m.NotFoundComponent)
+      },
+      // Wildcard route inside the customer layout (MUST BE LAST IN CHILDREN)
+      {
+        path: '**',
+        loadComponent: () => import('../../pages/admin/notFound/adminNotFoundPage').then(m => m.NotFoundComponent)
       }
     ]
   }
