@@ -69,6 +69,21 @@
   color: #ffffff;
 }
 
+.admin-nav-item.logout-btn {
+  background: transparent;
+  border: 1.5px solid #e05a47;
+  color: #e05a47;
+  font-weight: 600;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.admin-nav-item.logout-btn:hover {
+  background-color: #e05a47;
+  color: #ffffff;
+}
+
 /* Main content */
 .admin-content {
   flex-grow: 1;
