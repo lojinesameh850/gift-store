@@ -1,3 +1,6 @@
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
+
 const express = require('express');
 const { setServers } = require("dns/promises");
 setServers(["8.8.8.8", "8.8.4.4"]);
@@ -33,6 +36,8 @@ app.use(cors({
 app.use(express.json());
 
 connectDB();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Default status route (from teammate)
 app.get('/', (req, res) => {
