@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NgIf } from '@angular/common';
+import { CartService } from '../../services/customer/cartService';
 
 export interface Product {
   id: string;
@@ -18,7 +19,22 @@ export interface Product {
 export class ProductCardComponent {
   @Input() product!: Product;
 
-  onAddToCart() {
-    console.log('Product added:', this.product);
+  isLoading = false;
+
+  constructor(private cartService: CartService) { }
+
+  onAddToCart(): void {
+    if (!this.product?.id || this.isLoading) return;
+
+    this.isLoading = true;
+    this.cartService.addToCart(this.product.id, 1).subscribe({
+      next: () => {
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Failed to add product to cart:', err);
+        this.isLoading = false;
+      }
+    });
   }
 }
