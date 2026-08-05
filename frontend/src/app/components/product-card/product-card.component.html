@@ -1,10 +1,12 @@
 <div class="product-card">
   <div class="image-container">
-    <img *ngIf="product?.image; else noImage" [src]="product.image" [alt]="product.name" />
+    <img 
+      *ngIf="product?.images?.length" [src]="product.images[0]" [alt]="product?.name || 'product image'" />
     <ng-template #noImage>
       <div class="placeholder-icon">🎁</div>
     </ng-template>
   </div>
+
   <div class="card-body">
     <h3 class="product-name">{{ product?.name }}</h3>
     

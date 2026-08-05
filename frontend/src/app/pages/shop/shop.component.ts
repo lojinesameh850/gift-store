@@ -1,44 +1,57 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { NgFor } from '@angular/common';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { NgFor, NgIf } from '@angular/common';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 
 @Component({
   selector: 'app-shop',
-  imports: [NgFor, ProductCardComponent],
+  standalone: true,
+  imports: [NgFor, NgIf, ProductCardComponent],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.css'
 })
 export class ShopComponent implements OnInit {
 
+  categories: any[] = [];
   tags: any[] = [];
-  selectedTags: string[] = [];
   products: any[] = [];
+
+  selectedTags: string[] = [];
 
   private http = inject(HttpClient);
 
   ngOnInit() {
     this.fetchTags();
+    this.fetchProducts();
   }
 
   fetchTags() {
     const apiUrl = 'http://localhost:5000/api/tags';
     this.http.get<any>(apiUrl).subscribe({
       next: (res) => {
-        // backend responds with { success, count, data }
         this.tags = res?.data ?? res ?? [];
         console.log('Tags loaded:', this.tags);
       },
-      error: (error) => {
-        if (error?.status === 401) {
-          console.error('Error fetching tags: Unauthorized. Backend returned 401.');
-        } else {
-          console.error('Error fetching tags:', error);
-        }
-      }
+      error: (err) => console.error('Error fetching tags:', err)
     });
   }
-  
+
+  fetchProducts() {
+    let params = new HttpParams();
+
+    if (this.selectedTags.length > 0) {
+      params = params.set('tags', this.selectedTags.join(','));
+    }
+
+    const apiUrl = 'http://localhost:5000/api/products';
+    this.http.get<any>(apiUrl, { params }).subscribe({
+      next: (res) => {
+        this.products = res?.data ?? res ?? [];
+        console.log('Products loaded:', this.products);
+      },
+      error: (err) => console.error('Error fetching products:', err)
+    });
+  }
 
   onTagSelect(event: Event, tag: any) {
     const isChecked = (event.target as HTMLInputElement).checked;
@@ -51,6 +64,7 @@ export class ShopComponent implements OnInit {
     }
 
     console.log('Selected Tags:', this.selectedTags);
+    this.fetchProducts();
   }
 
 }

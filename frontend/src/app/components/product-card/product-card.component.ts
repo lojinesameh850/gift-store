@@ -16,7 +16,7 @@ export interface Product {
   styleUrl: './product-card.component.css'
 })
 export class ProductCardComponent {
-  @Input() product!: Product;
+  @Input() product!: any;
 
   onAddToCart() {
     console.log('Product added:', this.product);
