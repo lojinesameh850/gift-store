@@ -50,12 +50,12 @@ export class CartComponent implements OnInit, OnDestroy {
   get subtotal(): number {
     return this.items().reduce((sum, item) => {
       const price = item?.product?.price ?? 0;
-      return sum + (price * item.quantity);
+      return +(sum + (price * item.quantity)).toFixed(2);
     }, 0);
   }
 
   get total(): number {
-    return this.subtotal + this.giftWrapping + this.deliveryFee;
+    return +(this.subtotal + this.giftWrapping + this.deliveryFee).toFixed(2);
   }
 
   get itemCount(): number {

@@ -84,3 +84,9 @@
 .add-btn:hover {
   background-color: #c4412c;
 }
+
+.add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #c4412c;
+}
