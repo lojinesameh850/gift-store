@@ -4,6 +4,8 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 
+const bcrypt = require('bcryptjs'); // or require('bcrypt')
+
 // Models
 const Category = require('./models/categoryModel');
 const Tag = require('./models/tagModel');
@@ -17,8 +19,11 @@ if (!MONGO_URI) {
   process.exit(1);
 }
 
-// Default password hash for testing (Password: "Password123!")
-const DEMO_PASSWORD_HASH = '$2b$10$e8wVfWv5xGZ8k0ZJ5Q1Gce3Q8wZ1.nO3S8WzG5K9xGZ8k0ZJ5Q1Gc';
+// Plaintext password for all test accounts:
+const RAW_PASSWORD = 'Password123!';
+
+// Generate a valid bcrypt hash dynamically (10 salt rounds)
+const DEMO_PASSWORD_HASH = bcrypt.hashSync(RAW_PASSWORD, 10);
 
 // Real product definitions tailored for a gift shop
 const GIFT_CATALOG_TEMPLATES = [
