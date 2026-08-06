@@ -71,16 +71,18 @@ const productSchema = new mongoose.Schema(
 	},
 );
 
-productSchema.index({ name: "text", description: "text" });
-productSchema.index({ category: 1, price: 1 });
-productSchema.index({ tags: 1 });
+productSchema.index({ isActive: 1, createdAt: -1 });
+
+productSchema.index({ isActive: 1, category: 1, price: 1 });
+
+productSchema.index({ isActive: 1, tags: 1 });
 
 productSchema.index(
 	{ slug: 1 },
 	{ unique: true, partialFilterExpression: { isDeleted: { $ne: true } } },
 );
 
-productSchema.pre(/^find/, function () {
+productSchema.pre(/(^find|countDocuments)/, function () {
 	this.where({ isDeleted: { $ne: true } });
 });
 
