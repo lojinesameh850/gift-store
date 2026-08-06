@@ -63,12 +63,6 @@ export class adminTagService {
     return this.http.get<tagListResponse>(this.baseUrl, { params, headers: this.authHeaders() });
   }
 
-  getById(id: string): Observable<{ success: boolean; data: tag }> {
-    return this.http.get<{ success: boolean; data: tag }>(`${this.baseUrl}/${id}`, {
-      headers: this.authHeaders()
-    });
-  }
-
   create(payload: Partial<tagPayload>): Observable<{ success: boolean; message: string; data: tag }> {
     return this.http.post<{ success: boolean; message: string; data: tag }>(this.baseUrl, payload, {
       headers: this.authHeaders()
