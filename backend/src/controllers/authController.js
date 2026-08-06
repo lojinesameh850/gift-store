@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const Otp = require('../models/otpModel');
-const sendEmail = require('../utils/sendEmail');
-const { welcomeEmail, otpEmail, passwordChangedEmail } = require('../utils/emailTemplates');
+const sendEmail = require('../utils/sendemail');
+const { welcomeEmail, otpEmail, passwordChangedEmail } = require('../utils/emailtemplates');
 
 const OTP_TTL_MINUTES = 10;
 const RESET_TOKEN_TTL_MINUTES = 10;
@@ -74,15 +74,21 @@ exports.register = async (req, res) => {
       shippingAddresses: Array.isArray(shippingAddresses) ? shippingAddresses : []
     });
 
-    // Best-effort welcome email - if it fails we still let registration succeed.
+    // Best-effort welcome email - fire-and-forget so the response doesn't
+    // wait on the Gmail SMTP round-trip (can take 1-5+ seconds). Registration
+    // still succeeds even if the email fails or is still in flight. The
+    // whole thing is wrapped in try/catch so a bug in the template itself
+    // (e.g. a bad export) can't crash this request the way it used to -
+    // it should only ever cost you the confirmation email, never the
+    // action that already succeeded.
     try {
-      await sendEmail({
+      sendEmail({
         to: user.email,
         subject: 'Your Gift Store account was created successfully',
         html: welcomeEmail(user.firstName)
-      });
+      }).catch((emailError) => console.error('Failed to send welcome email:', emailError));
     } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
+      console.error('Failed to queue welcome email:', emailError);
     }
 
     // Registering returns a token so the client can log the user straight in
@@ -222,16 +228,18 @@ exports.forgotPassword = async (req, res) => {
       console.log(`[DEV ONLY] OTP for ${normalizedEmail}: ${otp}`);
     }
 
-    // Email sending is best-effort: if it fails (e.g. bad SMTP creds), we still
-    // want the OTP to exist and be usable via the console log above.
+    // Email sending is fire-and-forget: don't make the client wait on the
+    // Gmail SMTP round-trip. If it fails (e.g. bad SMTP creds), we still want
+    // the OTP to exist and be usable via the console log above. Wrapped in
+    // try/catch so a template bug can't crash this request either.
     try {
-      await sendEmail({
+      sendEmail({
         to: normalizedEmail,
         subject: 'Your Gift Store password reset code',
         html: otpEmail(otp)
-      });
+      }).catch((emailError) => console.error('Failed to send OTP email:', emailError));
     } catch (emailError) {
-      console.error('Failed to send OTP email:', emailError);
+      console.error('Failed to queue OTP email:', emailError);
     }
 
     res.status(200).json({ success: true, message: 'A reset code has been sent to your email' });
@@ -328,15 +336,18 @@ exports.resetPassword = async (req, res) => {
     // The reset token is single-use: delete it now that it's been used.
     await Otp.deleteOne({ _id: tokenDoc._id });
 
-    // Best-effort confirmation email.
+    // Best-effort confirmation email - fire-and-forget, same reasoning as
+    // above, and wrapped in try/catch: this exact call is what crashed the
+    // whole request before (missing template export throwing synchronously
+    // while building the arguments) - now it can only ever fail silently.
     try {
-      await sendEmail({
+      sendEmail({
         to: user.email,
         subject: 'Your Gift Store password was changed',
         html: passwordChangedEmail()
-      });
+      }).catch((emailError) => console.error('Failed to send password-changed email:', emailError));
     } catch (emailError) {
-      console.error('Failed to send password-changed email:', emailError);
+      console.error('Failed to queue password-changed email:', emailError);
     }
 
     res.status(200).json({ success: true, message: 'Password reset successfully' });

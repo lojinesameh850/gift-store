@@ -10,17 +10,37 @@
     <h1 class="auth-title">Create your account</h1>
     <p class="auth-subtitle">Join Hadeya to start gifting with heart</p>
 
-    <div class="form-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="form-error" *ngIf="errorMessage()">{{ errorMessage() }}</div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-grid">
         <div class="form-group">
           <label>First Name</label>
-          <input type="text" formControlName="firstName" class="form-control" placeholder="Jane" autocomplete="given-name" />
+          <input
+            type="text"
+            formControlName="firstName"
+            class="form-control"
+            [class.invalid]="firstNameErrorVisible()"
+            placeholder="Jane"
+            autocomplete="off"
+          />
+          <span class="field-hint" *ngIf="firstNameErrorVisible() && registerForm.get('firstName')?.errors?.['required']">
+            First name is required.
+          </span>
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input type="text" formControlName="lastName" class="form-control" placeholder="Howard" autocomplete="family-name" />
+          <input
+            type="text"
+            formControlName="lastName"
+            class="form-control"
+            [class.invalid]="lastNameErrorVisible()"
+            placeholder="Howard"
+            autocomplete="off"
+          />
+          <span class="field-hint" *ngIf="lastNameErrorVisible() && registerForm.get('lastName')?.errors?.['required']">
+            Last name is required.
+          </span>
         </div>
       </div>
 
@@ -30,9 +50,16 @@
           type="email"
           formControlName="email"
           class="form-control"
+          [class.invalid]="emailErrorVisible()"
           placeholder="you@example.com"
-          autocomplete="email"
+          autocomplete="off"
         />
+        <span class="field-hint" *ngIf="emailErrorVisible() && registerForm.get('email')?.errors?.['required']">
+          Email is required.
+        </span>
+        <span class="field-hint" *ngIf="emailErrorVisible() && registerForm.get('email')?.errors?.['email']">
+          Please enter a valid email address.
+        </span>
       </div>
 
       <div class="form-group">
@@ -41,10 +68,14 @@
           type="password"
           formControlName="password"
           class="form-control"
+          [class.invalid]="passwordErrorVisible()"
           placeholder="At least 8 characters"
-          autocomplete="new-password"
+          autocomplete="off"
         />
-        <span class="field-hint" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
+        <span class="field-hint" *ngIf="passwordErrorVisible() && registerForm.get('password')?.errors?.['required']">
+          Password is required.
+        </span>
+        <span class="field-hint" *ngIf="passwordErrorVisible() && registerForm.get('password')?.errors?.['minlength']">
           Password must be at least 8 characters long.
         </span>
       </div>
@@ -55,10 +86,14 @@
           type="password"
           formControlName="confirmPassword"
           class="form-control"
+          [class.invalid]="confirmPasswordErrorVisible()"
           placeholder="Re-enter your password"
-          autocomplete="new-password"
+          autocomplete="off"
         />
-        <span class="field-hint" *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']">
+        <span class="field-hint" *ngIf="confirmPasswordErrorVisible() && registerForm.get('confirmPassword')?.errors?.['required']">
+          Please confirm your password.
+        </span>
+        <span class="field-hint" *ngIf="confirmPasswordErrorVisible() && registerForm.get('confirmPassword')?.errors?.['mismatch']">
           Passwords do not match.
         </span>
       </div>
@@ -70,13 +105,13 @@
 <!--        </label>-->
 <!--      </div>-->
 
-      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid || isSubmitting">
-        {{ isSubmitting ? 'Creating account...' : 'Create Account' }}
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Creating account...' : 'Create Account' }}
       </button>
     </form>
 
     <p class="auth-footer">
-      Already have an account? <a routerLink="/login" class="link">Log In</a>
+      Already have an account? <a routerLink="/auth/login" class="link">Log In</a>
     </p>
   </div>
 </div>

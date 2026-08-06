@@ -1,7 +1,9 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { customerService, customerProfile, shippingAddress } from '../../../../services/customer/customerService';
+import { authService } from '../../../../services/authService';
 
 @Component({
   selector: 'app-profile',
@@ -27,6 +29,9 @@ export class profileComponent implements OnInit {
   showAddressModal = false;
   editingAddressId: string | null = null;
   addressForm!: FormGroup;
+
+  private router = inject(Router);
+  private authService = inject(authService);
 
   constructor(
     private fb: FormBuilder,
@@ -167,6 +172,14 @@ export class profileComponent implements OnInit {
   }
 
   onLogout(): void {
-    console.log('Logging out...');
+    this.authService.logout().subscribe({
+      // Whether the server call succeeds or fails, the local session should
+      // still be cleared and the user sent back to the login page.
+      next: () => this.router.navigateByUrl('/auth/login'),
+      error: () => {
+        this.authService.clearSessionLocally();
+        this.router.navigateByUrl('/auth/login');
+      }
+    });
   }
 }

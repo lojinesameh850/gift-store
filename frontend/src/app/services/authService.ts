@@ -1,7 +1,7 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, timeout, catchError, throwError, TimeoutError } from 'rxjs';
 
 export interface authUser {
   _id: string;
@@ -41,7 +41,31 @@ const TOKEN_KEY = 'authToken';
 const ROLE_KEY = 'authRole';
 const USER_KEY = 'authUser';
 
-const AUTH_API_BASE = '/api/auth';
+const AUTH_API_BASE = 'http://localhost:5000/api/auth';
+const REQUEST_TIMEOUT_MS = 15000;
+
+// Applied to every auth HTTP call: if the backend never responds within 15s
+// (e.g. a hung Mongo connection), this turns the "spinner spins forever with
+// zero feedback" state into a visible error - shaped like a normal
+// HttpErrorResponse (err.error.message) so every component's existing
+// `err.error?.message || '...'` fallback still works without any changes.
+function withRequestTimeout<T>(source: Observable<T>): Observable<T> {
+  return source.pipe(
+    timeout(REQUEST_TIMEOUT_MS),
+    catchError((err) => {
+      if (err instanceof TimeoutError) {
+        return throwError(() => ({
+          status: 0,
+          error: {
+            success: false,
+            message: 'The server is taking too long to respond. Please check your connection and try again.'
+          }
+        }));
+      }
+      return throwError(() => err);
+    })
+  );
+}
 
 @Injectable({ providedIn: 'root' })
 export class authService {
@@ -55,37 +79,40 @@ export class authService {
   register(payload: registerPayload): Observable<authResponse> {
     return this.http
       .post<authResponse>(`${AUTH_API_BASE}/register`, payload)
-      .pipe(tap((res) => this.storeSession(res.data)));
+      .pipe(withRequestTimeout, tap((res) => this.storeSession(res.data)));
   }
 
   login(payload: loginPayload): Observable<authResponse> {
     return this.http
       .post<authResponse>(`${AUTH_API_BASE}/login`, payload)
-      .pipe(tap((res) => this.storeSession(res.data)));
+      .pipe(withRequestTimeout, tap((res) => this.storeSession(res.data)));
   }
 
   logout(): Observable<{ success: boolean; message: string }> {
     return this.http
       .post<{ success: boolean; message: string }>(`${AUTH_API_BASE}/logout`, {})
-      .pipe(tap(() => this.clearSession()));
+      .pipe(withRequestTimeout, tap(() => this.clearSession()));
   }
 
   forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(`${AUTH_API_BASE}/forgot-password`, { email });
+    return this.http
+      .post<{ success: boolean; message: string }>(`${AUTH_API_BASE}/forgot-password`, { email })
+      .pipe(withRequestTimeout);
   }
 
   verifyOtp(email: string, otp: string): Observable<{ success: boolean; message: string; data: { resetToken: string } }> {
-    return this.http.post<{ success: boolean; message: string; data: { resetToken: string } }>(
-      `${AUTH_API_BASE}/verify-otp`,
-      { email, otp }
-    );
+    return this.http
+      .post<{ success: boolean; message: string; data: { resetToken: string } }>(`${AUTH_API_BASE}/verify-otp`, {
+        email,
+        otp
+      })
+      .pipe(withRequestTimeout);
   }
 
   resetPassword(resetToken: string, newPassword: string): Observable<{ success: boolean; message: string }> {
-    return this.http.post<{ success: boolean; message: string }>(`${AUTH_API_BASE}/reset-password`, {
-      resetToken,
-      newPassword
-    });
+    return this.http
+      .post<{ success: boolean; message: string }>(`${AUTH_API_BASE}/reset-password`, { resetToken, newPassword })
+      .pipe(withRequestTimeout);
   }
 
   private storeSession(data: authResponseData): void {
@@ -108,44 +135,29 @@ export class authService {
     this.clearSession();
   }
 
-//   getToken(): string | null {
-//     if (this.isBrowser) {
-//       return localStorage.getItem(TOKEN_KEY);
-//     }
-//     return null;
-//   }
-//
-//   getRole(): 'customer' | 'admin' | null {
-//     if (this.isBrowser) {
-//       return localStorage.getItem(ROLE_KEY) as 'customer' | 'admin' | null;
-//     }
-//     return null;
-//   }
-//
-//   getStoredUser(): authUser | null {
-//     if (this.isBrowser) {
-//       const raw = localStorage.getItem(USER_KEY);
-//       return raw ? JSON.parse(raw) : null;
-//     }
-//     return null;
-//   }
-//
-//   isLoggedIn(): boolean {
-//     return !!this.getToken();
-//   }
-
-    // In authService.ts
-
-    getToken(): string | null {
-      // Hardcode a token string so backend calls have something present
-      return 'mock-token';
+  getToken(): string | null {
+    if (this.isBrowser) {
+      return localStorage.getItem(TOKEN_KEY);
     }
+    return null;
+  }
 
-    getRole(): 'customer' | 'admin' | null {
-      return 'admin';
+  getRole(): 'customer' | 'admin' | null {
+    if (this.isBrowser) {
+      return localStorage.getItem(ROLE_KEY) as 'customer' | 'admin' | null;
     }
+    return null;
+  }
 
-    isLoggedIn(): boolean {
-      return true;
+  getStoredUser(): authUser | null {
+    if (this.isBrowser) {
+      const raw = localStorage.getItem(USER_KEY);
+      return raw ? JSON.parse(raw) : null;
     }
+    return null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
 }

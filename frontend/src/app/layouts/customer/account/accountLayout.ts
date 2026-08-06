@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { authService } from '../../../services/authService';
 
 // The account sidebar (profile/wishlist nav). Nested inside customerLayout
 // under the /account route only - NOT the site-wide shell. See
@@ -11,4 +12,17 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './accountLayout.html',
   styleUrl: './accountLayout.css'
 })
-export class accountLayoutComponent {}
+export class accountLayoutComponent {
+  private router = inject(Router);
+  private authService = inject(authService);
+
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: () => this.router.navigateByUrl('/auth/login'),
+      error: () => {
+        this.authService.clearSessionLocally();
+        this.router.navigateByUrl('/auth/login');
+      }
+    });
+  }
+}
