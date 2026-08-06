@@ -3,14 +3,15 @@
   <header class="shop-header">
     <div class="header-titles">
       <h1>Shop All Gifts</h1>
-      <span class="product-count">{{ products.length || 128 }} products</span>
+      <span class="product-count">{{ products.length }} products</span>
     </div>
     <div class="sort-container">
       <label for="sort">Sort by:</label>
-      <select id="sort">
-        <option value="popular">Popular</option>
-        <option value="low-high">Price: Low to High</option>
-        <option value="high-low">Price: High to Low</option>
+      <select id="sort" (change)="onSortChange($event)">
+        <option value="newest">Newest</option>
+        <option value="lowest-price">Price: Low to High</option>
+        <option value="highest-price">Price: High to Low</option>
+        <option value="oldest">Oldest</option>
       </select>
     </div>
   </header>
@@ -23,13 +24,16 @@
       <div class="filter-group">
         <h4>Category</h4>
         <ul>
-          <li><label><input type="checkbox" checked /> Home & Living</label></li>
-          <li><label><input type="checkbox" /> Jewelry</label></li>
-          <li><label><input type="checkbox" /> Personalized</label></li>
-          <li><label><input type="checkbox" /> Stationery</label></li>
-          <li><label><input type="checkbox" /> Sweets & Hampers</label></li>
-          <li><label><input type="checkbox" /> Kids</label></li>
-          <li><label><input type="checkbox" /> Corporate</label></li>
+          <li *ngFor="let category of categories">
+            <label>
+              <input
+                type="checkbox"
+                [value]="category.name"
+                (change)="onCategorySelect($event, category)"
+              />
+              <span>{{ category.name }}</span>
+            </label>
+          </li>
         </ul>
       </div>
 
@@ -37,10 +41,42 @@
       <div class="filter-group">
         <h4>Price Range</h4>
         <ul>
-          <li><label><input type="checkbox" /> Under EGP 250</label></li>
-          <li><label><input type="checkbox" /> EGP 250 - 500</label></li>
-          <li><label><input type="checkbox" /> EGP 500 - 1000</label></li>
-          <li><label><input type="checkbox" /> Above EGP 1000</label></li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                (change)="onPriceRangeSelect($event, 'under-250')"
+              />
+              Under EGP 250</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                (change)="onPriceRangeSelect($event, '250-500')"
+              />
+              EGP 250 - 500</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                (change)="onPriceRangeSelect($event, '500-1000')"
+              />
+              EGP 500 - 1000</label
+            >
+          </li>
+          <li>
+            <label
+              ><input
+                type="checkbox"
+                (change)="onPriceRangeSelect($event, 'above-1000')"
+              />
+              Above EGP 1000</label
+            >
+          </li>
         </ul>
       </div>
 
@@ -50,7 +86,11 @@
         <ul>
           <li *ngFor="let tag of tags">
             <label>
-              <input type="checkbox" [value]="tag.name" (change)="onTagSelect($event, tag)" />
+              <input
+                type="checkbox"
+                [value]="tag.name"
+                (change)="onTagSelect($event, tag)"
+              />
               <span>{{ tag.name }}</span>
             </label>
           </li>
@@ -61,7 +101,10 @@
     <!-- Product Grid & Pagination Container -->
     <div class="products-section">
       <main class="products-grid">
-        <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
+        <app-product-card
+          *ngFor="let product of products"
+          [product]="product"
+        ></app-product-card>
       </main>
 
       <!-- Pagination Controls -->

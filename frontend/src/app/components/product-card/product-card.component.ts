@@ -27,11 +27,16 @@ export class ProductCardComponent {
   constructor(private cartService: CartService, private customerService: customerService) { }
 
   onAddToCart(): void {
-    if (!this.product?.id || this.isLoading) return;
+    const productId = this.product?.id || (this.product as any)?._id;
+
+    if (!productId || this.isLoading) {
+      return;
+    }
 
     this.isLoading = true;
-    this.cartService.addToCart(this.product.id, 1).subscribe({
-      next: () => {
+    this.cartService.addToCart(productId, 1).subscribe({
+      next: (res) => {
+        console.log(res);
         this.isLoading = false;
       },
       error: (err) => {
@@ -42,16 +47,19 @@ export class ProductCardComponent {
   }
 
   onToggleWishlist(): void {
-    if (!this.product?.id || this.isWishlistLoading) return;
+    const productId = this.product?.id || (this.product as any)?._id;
+
+
+    if (!productId || this.isWishlistLoading) return;
 
     this.isWishlistLoading = true;
     const wasInWishlist = this.isInWishlist;
     const request$ = wasInWishlist
-      ? this.customerService.removeFromWishlist(this.product.id)
-      : this.customerService.addToWishlist(this.product.id);
+      ? this.customerService.removeFromWishlist(productId)
+      : this.customerService.addToWishlist(productId);
 
     request$.subscribe({
-      next: () => {
+      next: (res) => {
         this.isInWishlist = !wasInWishlist;
         this.isWishlistLoading = false;
       },

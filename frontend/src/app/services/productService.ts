@@ -3,21 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Product } from '../components/product-card/product-card.component';
 
-interface BackendProduct {
-  _id: string;
-  name: string;
-  price: number;
-  images: string[];
-}
-
-interface ProductsResponse {
-  success: boolean;
-  data: BackendProduct[];
-}
-
 export interface GetProductsParams {
   limit?: number;
   sort?: 'lowest-price' | 'highest-price' | 'newest' | 'oldest';
+  category?: string;
+  tags?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,7 +20,32 @@ export class productService {
 
   getProducts(params: GetProductsParams = {}): Observable<Product[]> {
     return this.http
-      .get<ProductsResponse>(this.apiUrl, { params: params as Record<string, string | number> })
-      .pipe(map(res => (res.data ?? []).map(p => ({ id: p._id, name: p.name, price: p.price, image: p.images?.[0] }))));
+      .get<any>(this.apiUrl, {
+        params: params as Record<string, string | number>,
+      })
+      .pipe(
+        map((res) => {
+          let rawProducts: any[] = [];
+
+          if (Array.isArray(res)) {
+            rawProducts = res;
+          } else if (Array.isArray(res?.data)) {
+            rawProducts = res.data;
+          } else if (Array.isArray(res?.data?.products)) {
+            rawProducts = res.data.products;
+          } else if (Array.isArray(res?.products)) {
+            rawProducts = res.products;
+          }
+
+          return rawProducts.map((p) => ({
+            id: p._id || p.id,
+            name: p.name,
+            price: p.price,
+            image: p.images?.[0] || p.image || '',
+            category: p.category,
+            tags: p.tags,
+          }));
+        }),
+      );
   }
 }
