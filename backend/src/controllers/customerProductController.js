@@ -79,8 +79,6 @@ exports.getAllProducts = async (req, res) => {
 
 		const skip = (pageNumber - 1) * limitNumber;
 
-		const baseFilter = { ...filter, isDeleted: { $ne: true } };
-
 		const [products, totalProducts] = await Promise.all([
 			Product.find(filter)
 				.populate("category", "name slug")
@@ -88,7 +86,7 @@ exports.getAllProducts = async (req, res) => {
 				.sort(sortOption)
 				.skip(skip)
 				.limit(limitNumber),
-			Product.countDocuments(baseFilter),
+			Product.countDocuments(filter),
 		]);
 
 		res.status(200).json({
