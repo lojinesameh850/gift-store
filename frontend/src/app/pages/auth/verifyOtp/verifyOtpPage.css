@@ -86,6 +86,10 @@
   border-color: #e05a47;
 }
 
+.form-control.invalid {
+  border-color: #dc2626;
+}
+
 .otp-input {
   text-align: center;
   letter-spacing: 0.4em;

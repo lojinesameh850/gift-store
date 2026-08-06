@@ -10,7 +10,7 @@
     <h1 class="auth-title">Welcome back</h1>
     <p class="auth-subtitle">Log in to continue your gift-giving journey</p>
 
-    <div class="form-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="form-error" *ngIf="errorMessage()">{{ errorMessage() }}</div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-group">
@@ -19,9 +19,16 @@
           type="email"
           formControlName="email"
           class="form-control"
+          [class.invalid]="emailErrorVisible()"
           placeholder="you@example.com"
           autocomplete="off"
         />
+        <span class="field-hint" *ngIf="emailErrorVisible() && loginForm.get('email')?.errors?.['required']">
+          Email is required.
+        </span>
+        <span class="field-hint" *ngIf="emailErrorVisible() && loginForm.get('email')?.errors?.['email']">
+          Please enter a valid email address.
+        </span>
       </div>
 
       <div class="form-group">
@@ -30,17 +37,21 @@
           type="password"
           formControlName="password"
           class="form-control"
+          [class.invalid]="passwordErrorVisible()"
           placeholder="••••••••"
           autocomplete="off"
         />
+        <span class="field-hint" *ngIf="passwordErrorVisible() && loginForm.get('password')?.errors?.['required']">
+          Password is required.
+        </span>
       </div>
 
       <div class="forgot-row">
         <a routerLink="/auth/forgot-password" class="link">Forgot password?</a>
       </div>
 
-      <button type="submit" class="btn-primary" [disabled]="loginForm.invalid || isSubmitting">
-        {{ isSubmitting ? 'Logging in...' : 'Log In' }}
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+        {{ isSubmitting() ? 'Logging in...' : 'Log In' }}
       </button>
     </form>
 

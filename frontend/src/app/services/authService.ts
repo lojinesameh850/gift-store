@@ -41,13 +41,14 @@ const TOKEN_KEY = 'authToken';
 const ROLE_KEY = 'authRole';
 const USER_KEY = 'authUser';
 
-const AUTH_API_BASE = '/api/auth';
+const AUTH_API_BASE = 'http://localhost:5000/api/auth';
 const REQUEST_TIMEOUT_MS = 15000;
 
-// Applied to every auth HTTP call: if the backend/proxy never responds within
-// 15s, this turns the hang into a visible error instead of a spinner that
-// spins forever - and shapes it like a normal HttpErrorResponse (err.error.message)
-// so every component's existing `err.error?.message || '...'` fallback still works.
+// Applied to every auth HTTP call: if the backend never responds within 15s
+// (e.g. a hung Mongo connection), this turns the "spinner spins forever with
+// zero feedback" state into a visible error - shaped like a normal
+// HttpErrorResponse (err.error.message) so every component's existing
+// `err.error?.message || '...'` fallback still works without any changes.
 function withRequestTimeout<T>(source: Observable<T>): Observable<T> {
   return source.pipe(
     timeout(REQUEST_TIMEOUT_MS),
@@ -55,7 +56,10 @@ function withRequestTimeout<T>(source: Observable<T>): Observable<T> {
       if (err instanceof TimeoutError) {
         return throwError(() => ({
           status: 0,
-          error: { success: false, message: 'The server is taking too long to respond. Please check your connection and try again.' }
+          error: {
+            success: false,
+            message: 'The server is taking too long to respond. Please check your connection and try again.'
+          }
         }));
       }
       return throwError(() => err);
@@ -98,7 +102,10 @@ export class authService {
 
   verifyOtp(email: string, otp: string): Observable<{ success: boolean; message: string; data: { resetToken: string } }> {
     return this.http
-      .post<{ success: boolean; message: string; data: { resetToken: string } }>(`${AUTH_API_BASE}/verify-otp`, { email, otp })
+      .post<{ success: boolean; message: string; data: { resetToken: string } }>(`${AUTH_API_BASE}/verify-otp`, {
+        email,
+        otp
+      })
       .pipe(withRequestTimeout);
   }
 

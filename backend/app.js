@@ -2,8 +2,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger-output.json');
 
 const express = require('express');
-const { setServers } = require("dns/promises");
-setServers(["8.8.8.8", "8.8.4.4"]);
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./src/config/database');

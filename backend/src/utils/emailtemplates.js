@@ -14,3 +14,11 @@ exports.otpEmail = (otp) => `
     <p>If you didn't request this, you can safely ignore this email.</p>
   </div>
 `;
+
+exports.passwordChangedEmail = () => `
+  <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto;">
+    <h2>Your password was changed</h2>
+    <p>This is a confirmation that your Gift Store account password was just changed.</p>
+    <p>If you didn't make this change, please contact support immediately.</p>
+  </div>
+`;

@@ -76,7 +76,12 @@ export class verifyOtpComponent implements OnInit {
   }
 
   onVerifyCode(): void {
-    if (this.verifyForm.invalid || this.isSubmitting()) return;
+    if (this.isSubmitting()) return;
+
+    if (this.verifyForm.invalid) {
+      this.verifyForm.markAllAsTouched();
+      return;
+    }
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');
@@ -95,7 +100,12 @@ export class verifyOtpComponent implements OnInit {
   }
 
   onResetPassword(): void {
-    if (this.resetForm.invalid || this.isSubmitting()) return;
+    if (this.isSubmitting()) return;
+
+    if (this.resetForm.invalid) {
+      this.resetForm.markAllAsTouched();
+      return;
+    }
 
     this.isSubmitting.set(true);
     this.errorMessage.set('');

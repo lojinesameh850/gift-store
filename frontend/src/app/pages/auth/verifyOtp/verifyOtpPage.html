@@ -23,13 +23,20 @@
             inputmode="numeric"
             formControlName="otp"
             class="form-control otp-input"
+            [class.invalid]="verifyForm.get('otp')?.touched && verifyForm.get('otp')?.invalid"
             placeholder="000000"
             maxlength="6"
             autocomplete="off"
           />
+          <span class="field-hint" *ngIf="verifyForm.get('otp')?.touched && verifyForm.get('otp')?.errors?.['required']">
+            Please enter the code.
+          </span>
+          <span class="field-hint" *ngIf="verifyForm.get('otp')?.touched && verifyForm.get('otp')?.errors?.['pattern']">
+            Enter the 6-digit code exactly as sent.
+          </span>
         </div>
 
-        <button type="submit" class="btn-primary" [disabled]="verifyForm.invalid || isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Verifying...' : 'Verify Code' }}
         </button>
       </form>
@@ -47,21 +54,48 @@
       <form [formGroup]="resetForm" (ngSubmit)="onResetPassword()" autocomplete="off">
         <div class="form-group">
           <label>New Password</label>
-          <input type="password" formControlName="newPassword" class="form-control" placeholder="At least 8 characters" autocomplete="off" />
+          <input
+            type="password"
+            formControlName="newPassword"
+            class="form-control"
+            [class.invalid]="resetForm.get('newPassword')?.touched && resetForm.get('newPassword')?.invalid"
+            placeholder="At least 8 characters"
+            autocomplete="off"
+          />
+          <span class="field-hint" *ngIf="resetForm.get('newPassword')?.touched && resetForm.get('newPassword')?.errors?.['required']">
+            Password is required.
+          </span>
+          <span class="field-hint" *ngIf="resetForm.get('newPassword')?.touched && resetForm.get('newPassword')?.errors?.['minlength']">
+            Password must be at least 8 characters long.
+          </span>
         </div>
 
         <div class="form-group">
           <label>Confirm New Password</label>
-          <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Re-enter your password" autocomplete="off" />
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            class="form-control"
+            [class.invalid]="resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.invalid"
+            placeholder="Re-enter your password"
+            autocomplete="off"
+          />
+          <span class="field-hint" *ngIf="resetForm.get('confirmPassword')?.touched && resetForm.get('confirmPassword')?.errors?.['required']">
+            Please confirm your password.
+          </span>
           <span class="field-hint" *ngIf="resetForm.get('confirmPassword')?.errors?.['mismatch']">
             Passwords do not match.
           </span>
         </div>
 
-        <button type="submit" class="btn-primary" [disabled]="resetForm.invalid || isSubmitting()">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
           {{ isSubmitting() ? 'Resetting...' : 'Reset Password' }}
         </button>
       </form>
+
+      <p class="auth-footer">
+        Session expired? <a class="link" (click)="backToRequest()">Request a new code</a>
+      </p>
     </ng-container>
 
     <!-- Step 3: done -->
