@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { authService } from '../../services/authService';
 
 // Admin shell: dark sidebar (logo + nav) on the left, routed page content on the right.
 // "Orders" is intentionally omitted from the nav per instruction to ignore
@@ -13,10 +14,17 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
 })
 export class adminLayoutComponent {
   private router = inject(Router);
+  private authService = inject(authService);
 
   logout(): void {
-    // Add your auth service logout logic here (e.g., this.authService.logout())
-    localStorage.removeItem('token'); // Clear stored token/session if applicable
-    this.router.navigate(['/login']); // Navigate back to login page
+    this.authService.logout().subscribe({
+      // Whether the server call succeeds or fails, the local session should
+      // still be cleared and the admin sent back to the login page.
+      next: () => this.router.navigateByUrl('/auth/login'),
+      error: () => {
+        this.authService.clearSessionLocally();
+        this.router.navigateByUrl('/auth/login');
+      }
+    });
   }
 }

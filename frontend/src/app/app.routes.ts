@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './guards/authGuard';
+import { adminGuard } from './guards/adminGuard';
+
 import { loginComponent } from './pages/auth/login/loginPage';
 import { registerComponent } from './pages/auth/register/registerPage';
 import { forgotPasswordComponent } from './pages/auth/forgotPassword/forgotPasswordPage';
@@ -31,6 +34,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: adminLayoutComponent,
+    canActivate: [adminGuard],
     children: [
       { path: 'products', component: adminProductsPageComponent },
       { path: 'categories', component: adminCategoriesPageComponent },
@@ -45,6 +49,7 @@ export const routes: Routes = [
   {
     path: '',
     component: customerLayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', component: HomeComponent },
       { path: 'shop', component: ShopComponent },

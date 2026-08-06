@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const User = require('../models/userModel');
 const Otp = require('../models/otpModel');
-const sendEmail = require('../utils/sendEmail');
-const { welcomeEmail, otpEmail, passwordChangedEmail } = require('../utils/emailTemplates');
+const sendEmail = require('../utils/sendemail');
+const { welcomeEmail, otpEmail, passwordChangedEmail } = require('../utils/emailtemplates');
 
 const OTP_TTL_MINUTES = 10;
 const RESET_TOKEN_TTL_MINUTES = 10;

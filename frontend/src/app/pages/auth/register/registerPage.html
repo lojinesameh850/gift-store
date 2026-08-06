@@ -12,15 +12,15 @@
 
     <div class="form-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" autocomplete="off">
       <div class="form-grid">
         <div class="form-group">
           <label>First Name</label>
-          <input type="text" formControlName="firstName" class="form-control" placeholder="Jane" autocomplete="given-name" />
+          <input type="text" formControlName="firstName" class="form-control" placeholder="Jane" autocomplete="off" />
         </div>
         <div class="form-group">
           <label>Last Name</label>
-          <input type="text" formControlName="lastName" class="form-control" placeholder="Howard" autocomplete="family-name" />
+          <input type="text" formControlName="lastName" class="form-control" placeholder="Howard" autocomplete="off" />
         </div>
       </div>
 
@@ -31,7 +31,7 @@
           formControlName="email"
           class="form-control"
           placeholder="you@example.com"
-          autocomplete="email"
+          autocomplete="off"
         />
       </div>
 
@@ -42,7 +42,7 @@
           formControlName="password"
           class="form-control"
           placeholder="At least 8 characters"
-          autocomplete="new-password"
+          autocomplete="off"
         />
         <span class="field-hint" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
           Password must be at least 8 characters long.
@@ -56,7 +56,7 @@
           formControlName="confirmPassword"
           class="form-control"
           placeholder="Re-enter your password"
-          autocomplete="new-password"
+          autocomplete="off"
         />
         <span class="field-hint" *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']">
           Passwords do not match.
@@ -76,7 +76,7 @@
     </form>
 
     <p class="auth-footer">
-      Already have an account? <a routerLink="/login" class="link">Log In</a>
+      Already have an account? <a routerLink="/auth/login" class="link">Log In</a>
     </p>
   </div>
 </div>
