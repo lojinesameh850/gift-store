@@ -65,6 +65,42 @@
   color: #e15b43;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wishlist-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #e15b43;
+  border: 1.5px solid #e15b43;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.05);
+}
+
+.wishlist-btn.active {
+  background-color: #e15b43;
+  color: #ffffff;
+}
+
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .add-btn {
   width: 32px;
   height: 32px;
@@ -82,5 +118,11 @@
 }
 
 .add-btn:hover {
+  background-color: #c4412c;
+}
+
+.add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
   background-color: #c4412c;
 }

@@ -9,10 +9,19 @@
 
   <div class="card-body">
     <h3 class="product-name">{{ product?.name }}</h3>
-    
+
     <div class="card-footer">
       <span class="product-price">EGP {{ product?.price }}</span>
-      <button class="add-btn" (click)="onAddToCart()" aria-label="Add to cart">+</button>
+      <div class="actions">
+        <button
+          class="wishlist-btn"
+          [ngClass]="{ 'active': isInWishlist }"
+          [disabled]="isWishlistLoading"
+          (click)="onToggleWishlist()"
+          [attr.aria-label]="isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'"
+        >{{ isInWishlist ? '♥' : '♡' }}</button>
+        <button class="add-btn" [disabled]="isLoading" (click)="onAddToCart()" aria-label="Add to cart">+</button>
+      </div>
     </div>
   </div>
 </div>
