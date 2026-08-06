@@ -1,7 +1,7 @@
 <div class="product-card">
   <div class="image-container">
     <img 
-      *ngIf="product?.images?.length" [src]="product.images[0]" [alt]="product?.name || 'product image'" />
+      *ngIf="product?.image?.length" [src]="product.image[0]" [alt]="product?.name || 'product image'" />
     <ng-template #noImage>
       <div class="placeholder-icon">🎁</div>
     </ng-template>
