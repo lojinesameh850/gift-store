@@ -1,66 +1,95 @@
+const mongoose = require("mongoose");
 const Product = require("../models/productModel");
+
+const escapeRegex = (string) => {
+	return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
 
 exports.getAllProducts = async (req, res) => {
 	try {
-		let { search, category, tags, minPrice, maxPrice, sort, page, limit } =
-			req.query;
+		const {
+			search,
+			category,
+			tags,
+			minPrice,
+			maxPrice,
+			sort,
+			page,
+			limit,
+		} = req.query;
 
 		let filter = { isActive: true };
 
-		if (search) {
+		if (search && typeof search === "string" && search.trim() !== "") {
+			const safeSearch = escapeRegex(search.trim());
 			filter.$or = [
-				{ name: { $regex: search, $options: "i" } },
-				{ description: { $regex: search, $options: "i" } },
+				{ name: { $regex: safeSearch, $options: "i" } },
+				{ description: { $regex: safeSearch, $options: "i" } },
 			];
 		}
 
-		if (category) {
-			filter.category = category;
-		}
-
-		if (tags) {
-			const tagsArray = tags.split(",");
-			filter.tags = { $in: tagsArray };
-		}
-
-		if (minPrice || maxPrice) {
-			filter.price = {};
-			if (minPrice) filter.price.$gte = Number(minPrice);
-			if (maxPrice) filter.price.$lte = Number(maxPrice);
-		}
-
-		let sortOption = { createdAt: -1 };
-		if (sort) {
-			switch (sort) {
-				case "lowest-price":
-					sortOption = { price: 1 };
-					break;
-				case "highest-price":
-					sortOption = { price: -1 };
-					break;
-				case "newest":
-					sortOption = { createdAt: -1 };
-					break;
-				case "oldest":
-					sortOption = { createdAt: 1 };
-					break;
-				default:
-					sortOption = { createdAt: -1 };
+		if (category && typeof category === "string") {
+			if (mongoose.Types.ObjectId.isValid(category)) {
+				filter.category = category;
+			} else {
+				return res.status(400).json({
+					success: false,
+					message: "Invalid category ID format",
+				});
 			}
 		}
 
-		const pageNumber = parseInt(page) || 1;
-		const limitNumber = parseInt(limit) || 12;
+		if (tags && typeof tags === "string") {
+			const tagsArray = tags
+				.split(",")
+				.filter((tag) => mongoose.Types.ObjectId.isValid(tag.trim()));
+			if (tagsArray.length > 0) {
+				filter.tags = { $in: tagsArray };
+			}
+		}
+
+		if (minPrice !== undefined || maxPrice !== undefined) {
+			filter.price = {};
+			if (minPrice !== undefined && !isNaN(Number(minPrice))) {
+				filter.price.$gte = Number(minPrice);
+			}
+			if (maxPrice !== undefined && !isNaN(Number(maxPrice))) {
+				filter.price.$lte = Number(maxPrice);
+			}
+			if (Object.keys(filter.price).length === 0) {
+				delete filter.price;
+			}
+		}
+
+		const sortOptionsMap = {
+			"lowest-price": { price: 1 },
+			"highest-price": { price: -1 },
+			newest: { createdAt: -1 },
+			oldest: { createdAt: 1 },
+		};
+		const sortOption = sortOptionsMap[sort] || { createdAt: -1 };
+
+		let pageNumber = parseInt(page);
+		let limitNumber = parseInt(limit);
+
+		pageNumber = pageNumber > 0 && !isNaN(pageNumber) ? pageNumber : 1;
+
+		limitNumber = limitNumber > 0 && !isNaN(limitNumber) ? limitNumber : 12;
+		if (limitNumber > 100) limitNumber = 100;
+
 		const skip = (pageNumber - 1) * limitNumber;
 
-		const products = await Product.find(filter)
-			.populate("category", "name slug")
-			.populate("tags", "name slug")
-			.sort(sortOption)
-			.skip(skip)
-			.limit(limitNumber);
+		const baseFilter = { ...filter, isDeleted: { $ne: true } };
 
-		const totalProducts = await Product.countDocuments(filter);
+		const [products, totalProducts] = await Promise.all([
+			Product.find(filter)
+				.populate("category", "name slug")
+				.populate("tags", "name slug")
+				.sort(sortOption)
+				.skip(skip)
+				.limit(limitNumber),
+			Product.countDocuments(baseFilter),
+		]);
 
 		res.status(200).json({
 			success: true,
@@ -73,7 +102,8 @@ exports.getAllProducts = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: error.message,
+			message: "Server Error",
+			error: error.message,
 		});
 	}
 };
@@ -101,7 +131,8 @@ exports.getProductBySlug = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: error.message,
+			message: "Server Error",
+			error: error.message,
 		});
 	}
 };
