@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgIf, NgClass } from '@angular/common';
 import { CartService } from '../../services/customer/cartService';
 import { customerService } from '../../services/customer/customerService';
